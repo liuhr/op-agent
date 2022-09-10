@@ -1,4 +1,4 @@
-package managePlugin
+package plugin
 
 import (
 	"sync"

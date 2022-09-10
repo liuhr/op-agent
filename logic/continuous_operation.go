@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"op-agent/mPlugin"
+	"op-agent/plugin"
 	"op-agent/agentCli"
 	"strings"
 	"sync/atomic"
@@ -229,8 +229,8 @@ func ContinuousOperation() {
 	}
 
 	log.Infof("continuous operation: starting")
-	managePlugin.RunAgentPackageControl()
-	managePlugin.RunWatchPackageTask()
+	plugin.RunAgentPackageControl()
+	plugin.RunWatchPackageTask()
 	agentWatch.InitAgentWatcher()
 
 	if oraft.IsRaftEnabled() {
