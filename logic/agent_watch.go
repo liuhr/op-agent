@@ -7,7 +7,7 @@ import (
 	"github.com/asmcos/requests"
 	"op-agent/common"
 	"op-agent/config"
-	"op-agent/opagent"
+	"op-agent/agentCli"
 	"op-agent/process"
 	oraft "op-agent/raft"
 	"op-agent/util"
@@ -77,25 +77,25 @@ func (agentWatch *AgentWatcher) GenerateAgentQueue() time.Duration {
 
 func (agentWatch *AgentWatcher) pushAgentNodesToQueue() {
 	queueName := "discoverAgent"
-	agentNodeQueue := opagent.CreateOrReturnQueue(queueName)
+	agentNodeQueue := agentCli.CreateOrReturnQueue(queueName)
 	if agentNodeQueue.QueueLen() != 0 {
 		log.Warningf("It is detected that there are agent nodes in the agentNodeQueue. Ignore this loop.")
 		return
 	}
-	agentHosts, err := opagent.GetOutDatedAgentHosts()
+	agentHosts, err := agentCli.GetOutDatedAgentHosts()
 	if err != nil {
-		log.Errorf("Run opagent.GetOutDatedAgentHosts err: %+v", err)
+		log.Errorf("Run agentCli.GetOutDatedAgentHosts err: %+v", err)
 		return
 	}
 	for _, agentNode := range agentHosts {
-		node := opagent.AgentNode{Hostname: agentNode["hostname"], IP: agentNode["ip"], Token: agentNode["token"], Port: util.ConvStrToInt(agentNode["port"])}
+		node := agentCli.AgentNode{Hostname: agentNode["hostname"], IP: agentNode["ip"], Token: agentNode["token"], Port: util.ConvStrToInt(agentNode["port"])}
 		agentNodeQueue.Push(node)
 	}
 }
 
 func (agentWatch *AgentWatcher) ConcurrencyWatchAgentWatcherQueue() {
 	queueName := "discoverAgent"
-	agentNodeQueue := opagent.CreateOrReturnQueue(queueName)
+	agentNodeQueue := agentCli.CreateOrReturnQueue(queueName)
 	for i:= uint(0); i < config.Config.DiscoverOpAgentConcurrency; i++{
 		go func() {
 			for {
@@ -112,7 +112,7 @@ func (agentWatch *AgentWatcher) ConcurrencyWatchAgentWatcherQueue() {
 				nodeAgent := agentNodeQueue.Consume()
 
 				//Get packages change task
-				packageTask, err = opagent.GetPackagesTask(nodeAgent.Token)
+				packageTask, err = agentCli.GetPackagesTask(nodeAgent.Token)
 				if err != nil {
 					postData["GetPackagesTaskStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 				} else {
@@ -122,7 +122,7 @@ func (agentWatch *AgentWatcher) ConcurrencyWatchAgentWatcherQueue() {
 				postData["PackageTask"] = string(result)
 
 				//Get all jobs
-				allJobs, err = opagent.GetAllJobs(nodeAgent.Token)
+				allJobs, err = agentCli.GetAllJobs(nodeAgent.Token)
 				if err != nil {
 					postData["GetAllJobsStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 				} else {
@@ -132,7 +132,7 @@ func (agentWatch *AgentWatcher) ConcurrencyWatchAgentWatcherQueue() {
 				postData["allJobs"] = string(result)
 
 				//Get variables
-				if err = opagent.GetVariables(postData); err != nil {
+				if err = agentCli.GetVariables(postData); err != nil {
 					postData["getVariablesStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 				}
 

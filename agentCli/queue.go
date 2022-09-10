@@ -1,4 +1,4 @@
-package opagent
+package agentCli
 
 import (
 	"op-agent/config"

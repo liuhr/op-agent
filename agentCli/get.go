@@ -1,4 +1,4 @@
-package opagent
+package agentCli
 
 import (
         "github.com/spf13/cobra"

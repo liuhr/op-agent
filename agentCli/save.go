@@ -1,4 +1,4 @@
-package opagent
+package agentCli
 
 import (
         "errors"
@@ -22,7 +22,7 @@ func newSave() *cobra.Command {
                 SilenceUsage: true,
                 RunE: func(cmd *cobra.Command, args []string) error {
                         if len(args) == 0 {
-                                log.Errorf("Task parameters can not be null. Can run ./opagent save -h for detail")
+                                log.Errorf("Task parameters can not be null. Can run ./agentCli save -h for detail")
                                 return nil
                         }
                         taskFile := args[0]

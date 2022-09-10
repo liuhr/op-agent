@@ -13,7 +13,7 @@ import (
 	"github.com/martini-contrib/render"
 
 	"op-agent/config"
-	"op-agent/opagent"
+	"op-agent/agentCli"
 	"op-agent/process"
 	oraft "op-agent/raft"
 	"op-agent/util"
@@ -148,13 +148,13 @@ func (this *HttpAPI) JobSave(params martini.Params, r render.Render, req *http.R
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error() + " " + "Unmarshal params failed"})
 		return
 	}
-	err = opagent.SaveJob(dat)
+	err = agentCli.SaveJob(dat)
 	if err != nil {
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error()})
 		return
 	}
 	var result map[string]string
-	if result, err = opagent.ListOneJob(dat["jobname"]); err != nil {
+	if result, err = agentCli.ListOneJob(dat["jobname"]); err != nil {
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error()})
 		return
 	}
@@ -183,7 +183,7 @@ func (this *HttpAPI) SaveJobLog(params martini.Params, r render.Render, req *htt
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error() + " " + "Unmarshal params failed"})
 		return
 	}
-	err = opagent.WriteJobExecLogs(dat)
+	err = agentCli.WriteJobExecLogs(dat)
 	if err != nil {
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error()})
 		return
@@ -214,7 +214,7 @@ func (this *HttpAPI) SaveOnceJobStatusOrLog(params martini.Params, r render.Rend
 		return
 	}
 
-	err = opagent.SaveOnceJobStatusOrLog(dat)
+	err = agentCli.SaveOnceJobStatusOrLog(dat)
 	if err != nil {
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error()})
 		return
@@ -248,7 +248,7 @@ func (this *HttpAPI) NodeStatusSave(params martini.Params, r render.Render, req 
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error() + " " + "Unmarshal params failed"})
 		return
 	}
-	err = opagent.WriteNodeStatus(dat)
+	err = agentCli.WriteNodeStatus(dat)
 	if err != nil {
 		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error()})
 		return
@@ -259,7 +259,7 @@ func (this *HttpAPI) NodeStatusSave(params martini.Params, r render.Render, req 
 
 
 func (this *HttpAPI) GetAllJobs(params martini.Params, r render.Render, req *http.Request) {
-	jobsResults, err := opagent.GetAllJobs("")
+	jobsResults, err := agentCli.GetAllJobs("")
 	if err != nil {
 		r.JSON(200, &APIResponse{Code: ERROR, Details: err})
 		return
@@ -269,7 +269,7 @@ func (this *HttpAPI) GetAllJobs(params martini.Params, r render.Render, req *htt
 }
 
 func (this *HttpAPI) GetActiveAgents(params martini.Params, r render.Render, req *http.Request) {
-	activeAgents, err := opagent.GetAllActiveHosts()
+	activeAgents, err := agentCli.GetAllActiveHosts()
 	if err != nil {
 		r.JSON(200, &APIResponse{Code: ERROR, Details: err})
 		return
@@ -281,7 +281,7 @@ func (this *HttpAPI) GetActiveAgents(params martini.Params, r render.Render, req
 func (this *HttpAPI) GetOnceJobVersion(params martini.Params, r render.Render, req *http.Request) {
 	host := strings.Replace(params["ip"]," ","",-1)
 	jobName := strings.Replace(params["jobName"]," ","",-1)
-	version, err := opagent.GetOnceJobVersion(host, jobName)
+	version, err := agentCli.GetOnceJobVersion(host, jobName)
 	if err != nil {
 		Respond(r, &APIResponse{Code: ERROR, Message: fmt.Sprintf("%+v", err)})
 		return
@@ -317,7 +317,7 @@ func (this *HttpAPI) HandleOpAgent(params martini.Params, r render.Render, req *
 		return
 	}
 	//Save Node Status To backend db.
-	err = opagent.WriteNodeStatus(dat)
+	err = agentCli.WriteNodeStatus(dat)
 	if err != nil {
 		results["writeNodeStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 	} else {
@@ -325,7 +325,7 @@ func (this *HttpAPI) HandleOpAgent(params martini.Params, r render.Render, req *
 	}
 
 	//Get packages change task
-	packageTask, err = opagent.GetPackagesTask(dat["token"])
+	packageTask, err = agentCli.GetPackagesTask(dat["token"])
 	if err != nil {
 		results["GetPackagesTaskStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 	} else {
@@ -335,7 +335,7 @@ func (this *HttpAPI) HandleOpAgent(params martini.Params, r render.Render, req *
 	results["PackageTask"] = string(result)
 
 	//Get all jobs
-	allJobs, err = opagent.GetAllJobs(dat["token"])
+	allJobs, err = agentCli.GetAllJobs(dat["token"])
 	if err != nil {
 		results["GetAllJobsStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 	} else {
@@ -345,7 +345,7 @@ func (this *HttpAPI) HandleOpAgent(params martini.Params, r render.Render, req *
 	results["allJobs"] = string(result)
 
 	//Get variables
-	if err = opagent.GetVariables(results); err != nil {
+	if err = agentCli.GetVariables(results); err != nil {
 		results["getVariablesStatus"] = base64.StdEncoding.EncodeToString([]byte(err.Error()))
 	}
 

@@ -1,4 +1,4 @@
-package opagent
+package agentCli
 
 import (
 	"op-agent/config"
@@ -14,19 +14,19 @@ var (
 func init() {
 	cobra.EnableCommandSorting = false
 	rootCmd = &cobra.Command{
-		Use:   "opagent",
+		Use:   "agentCli",
 		Short: "MySQL agent command line operation tool",
 		Long: `Example:
-			opagent get nodes [IP|HOSTNAME] [--o wide]
-			opagent get jobs [JOBNAME]
-			opagent get packages [PACKAGENAME]
-			opagent logs <JOBNAME> <HOSTIP|ALL> [LIMIT] [--o wide|short]
-			opagent upload <FILE|DOCUMENT> [deploymentDirName]
-			opagent download <PACKAGENAME> [VERSION]
-			opagent rollback <PACKAGENAME> <VERSION>
-			opagent save <task.json>
-			opagent top <JOBNAME>
-			opagent analysis <packages|jobs> [jobName] [onceJobVersion]
+			agentCli get nodes [IP|HOSTNAME] [--o wide]
+			agentCli get jobs [JOBNAME]
+			agentCli get packages [PACKAGENAME]
+			agentCli logs <JOBNAME> <HOSTIP|ALL> [LIMIT] [--o wide|short]
+			agentCli upload <FILE|DOCUMENT> [deploymentDirName]
+			agentCli download <PACKAGENAME> [VERSION]
+			agentCli rollback <PACKAGENAME> <VERSION>
+			agentCli save <task.json>
+			agentCli top <JOBNAME>
+			agentCli analysis <packages|jobs> [jobName] [onceJobVersion]
 		`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -46,7 +46,7 @@ func init() {
 	if len(configFile) > 0 {
 		config.ForceRead(configFile)
 	} else {
-		config.Read("./.opagent.conf.json" ,"/etc/opagent.conf.json", "conf/opagent.conf.json", "opagent.conf.json")
+		config.Read("./.agentCli.conf.json" ,"/etc/agentCli.conf.json", "conf/agentCli.conf.json", "agentCli.conf.json")
 	}
 	config.MarkConfigurationLoaded()
 }

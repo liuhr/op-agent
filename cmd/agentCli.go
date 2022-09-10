@@ -1,9 +1,9 @@
 package main
 
 import (
-	"op-agent/opagent"
+	"op-agent/agentCli"
 )
 
 func main() {
-	opagent.Execute()
+	agentCli.Execute()
 }

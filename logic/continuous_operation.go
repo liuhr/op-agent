@@ -1,8 +1,8 @@
 package logic
 
 import (
-	"op-agent/managePlugin"
-	"op-agent/opagent"
+	"op-agent/mPlugin"
+	"op-agent/agentCli"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -248,7 +248,7 @@ func ContinuousOperation() {
 				} else {
 					return
 				}
-				opagent.CleanupJobLogsOfAllHosts()
+				agentCli.CleanupJobLogsOfAllHosts()
 			}
 			if oraft.IsRaftEnabled() {
 				if oraft.IsLeader() {

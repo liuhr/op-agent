@@ -1,5 +1,4 @@
-
-package opagent
+package agentCli
 
 import (
 	"fmt"
