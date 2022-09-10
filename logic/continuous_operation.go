@@ -3,6 +3,7 @@ package logic
 import (
 	"op-agent/plugin"
 	"op-agent/agentCli"
+	"op-agent/manager"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -231,7 +232,7 @@ func ContinuousOperation() {
 	log.Infof("continuous operation: starting")
 	plugin.RunAgentPackageControl()
 	plugin.RunWatchPackageTask()
-	agentWatch.InitAgentWatcher()
+	manager.AgentWatch.InitAgentWatcher()
 
 	if oraft.IsRaftEnabled() {
 		if health, err := process.HealthTest(); err != nil {
