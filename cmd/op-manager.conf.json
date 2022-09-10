@@ -1,0 +1,69 @@
+{
+  "Debug": true,
+  "ListenAddress": ":8090",
+
+  "RaftEnabled": false,
+  "RaftDataDir": "/data/op-manager/data",
+  "RaftBind": "127.0.0.1",
+  "DefaultRaftPort": 8091,
+  "RaftNodes": [
+  ],
+
+  "RaftNodesStatusCheckIntervalSeconds": 100,
+  "RaftNodesStatusAlertProcess": "",
+  
+  "RaftLeaderDomain": "",
+  "DomainCheckIntervalSeconds":60,
+  "SwithDomainProcess": [
+   ],
+
+  "BackendDbHosts": "127.0.0.1",
+  "BackendDbPort":3306,
+  "BackendDbUser":"op_meta_user",
+  "BackendDbPass":"Gli9egh0ooMu9zohxeisx",
+  "BackendDb":"op_meta",
+
+  "InstancePollSeconds": 5,
+  "UnseenInstanceForgetHours": 240,
+  "SnapshotTopologiesIntervalHours": 0,
+  "InstanceBulkOperationsWaitTimeoutSeconds": 10,
+
+  "AgentNodesPullPackagesIntervalSeconds": 120,
+  "DealWithAgentsDescMaxConcurrency": 10,
+  "AgentDownloadPackageMaxConcurrency": 1000,
+
+  "AuthenticationMethod": "basic",
+  "HTTPAuthUser": "sysuser",
+  "HTTPAuthPassword": "w95fa8cw403fc220db1f4csde2130bsfd",
+  "AuthUserHeader": "",
+  "PowerAuthUsers": [
+    "*"
+  ],
+  "UseSSL": false,
+  "UseMutualTLS": false,
+  "SSLSkipVerify": false,
+  "SSLPrivateKeyFile": "",
+  "SSLCertFile": "",
+  "SSLCAFile": "",
+  "SSLValidOUs": [],
+  "URLPrefix": "",
+  "StatusEndpoint": "/api/status",
+  "StatusOUVerify": false,
+
+  "MySQLReadTimeoutSeconds":30,
+  "MySQLConnectTimeoutSeconds": 2,
+  "NumberOfJobLogDaysKeepPerHost": 5,
+  "NumberOfJobLogDaysKeepInactiveHost": 30,
+  "LastSeenTimeoutSeconds": 600,
+  "OpAgentUser": "sysuser",
+  "OpAgentPass": "w95fa8cw403fc220db1f4csde2130bsfd",
+  "DiscoverOpAgentConcurrency": 100,
+  "DiscoverOpAgentIntervalLists": [5],
+  "OpAgentApiEndpoint": "/api/opAgent",
+  "OpAgentDataReceiveApiEndPoint": "/api/dataReceive",
+  "OpAgentPort": 7070,
+
+  "ApiEndpoint": "/api/opManager",
+  "Processes":[
+  ]
+}

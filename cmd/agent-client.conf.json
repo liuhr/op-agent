@@ -1,0 +1,7 @@
+{
+  "BackendDbHosts": "127.0.0.1",
+  "BackendDbPort": 3306,
+  "BackendDbUser": "op_meta_user",
+  "BackendDbPass": "Gli9egh0ooMu9zohxeisx",
+  "BackendDb": "op_meta"
+}

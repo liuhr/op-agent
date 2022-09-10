@@ -1,0 +1,21 @@
+{
+  "JobName": "test1.py",
+  "Command": "python /data/op-agent/src/test1.py",
+
+  "## Here are some demos": "",
+  "## Seconds, Minutes, Hours, Day of month, Month, Day of week, Year": "* * * * * * *",
+  "## Execute 10 seconds": "*/10 * * * * * *",
+  "## Execute every minute": "0 */1 * * * * *",
+  "## Execute every hour": "0 0 */1 * * * *",
+
+  "CronExpr": "0 */2 * * * * *",
+  "OnceJob": 0,
+  "Timeout": 0,
+  "SynFlag": 0,
+
+  "Enabled": 1,
+  "WhiteHosts": [
+  ],
+  "BlackHosts": [
+  ]
+}

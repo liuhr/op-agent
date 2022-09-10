@@ -1,0 +1,62 @@
+# github.com/asmcos/requests v0.0.0-20210319030608-c839e8ae4946
+## explicit
+github.com/asmcos/requests
+# github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0
+## explicit
+github.com/codegangsta/inject
+# github.com/go-martini/martini v0.0.0-20170121215854-22fa46961aab
+## explicit
+github.com/go-martini/martini
+# github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75
+## explicit
+github.com/gorhill/cronexpr
+# github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c
+## explicit
+github.com/howeyc/gopass
+# github.com/inconshreveable/mousetrap v1.0.0
+github.com/inconshreveable/mousetrap
+# github.com/martini-contrib/auth v0.0.0-20150219114609-fa62c19b7ae8
+## explicit
+github.com/martini-contrib/auth
+# github.com/martini-contrib/gzip v0.0.0-20151124214156-6c035326b43f
+## explicit
+github.com/martini-contrib/gzip
+# github.com/martini-contrib/render v0.0.0-20150707142108-ec18f8345a11
+## explicit
+github.com/martini-contrib/render
+# github.com/mattn/go-runewidth v0.0.14-0.20220323023645-f9d555329d96
+## explicit
+github.com/mattn/go-runewidth
+# github.com/olekukonko/tablewriter v0.0.6-0.20210304033056-74c60be0ef68
+## explicit
+github.com/olekukonko/tablewriter
+# github.com/openark/golib v0.0.0-20210531070646-355f37940af8
+## explicit
+github.com/openark/golib/log
+github.com/openark/golib/sqlutils
+# github.com/outbrain/golib v0.0.0-20200503083229-2531e5dbcc71
+## explicit
+github.com/outbrain/golib/log
+# github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
+## explicit
+github.com/oxtoacart/bpool
+# github.com/patrickmn/go-cache v2.1.0+incompatible
+## explicit
+github.com/patrickmn/go-cache
+# github.com/prometheus/client_golang v1.4.0
+## explicit
+# github.com/rivo/uniseg v0.2.0
+github.com/rivo/uniseg
+# github.com/spf13/cobra v1.5.0
+## explicit
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.5
+github.com/spf13/pflag
+# golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
+## explicit
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/sys v0.0.0-20200819171115-d785dc25833f
+## explicit
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
