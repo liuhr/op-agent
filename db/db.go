@@ -9,6 +9,7 @@ import (
 	"op-agent/config"
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // ExecDb will execute given query on the backend database.

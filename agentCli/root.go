@@ -4,6 +4,8 @@ import (
 	"op-agent/config"
 	"github.com/openark/golib/log"
 	"github.com/spf13/cobra"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
