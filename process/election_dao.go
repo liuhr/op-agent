@@ -2,10 +2,10 @@ package process
 
 import (
 	"fmt"
-	"op-agent/config"
-	"op-agent/db"
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
+	"op-agent/config"
+	"op-agent/db"
 )
 
 // AttemptElection tries to grab leadership (become active node)

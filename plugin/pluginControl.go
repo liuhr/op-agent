@@ -5,17 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/asmcos/requests"
-	oraft "op-agent/raft"
 	"github.com/openark/golib/log"
 	"math/rand"
+	oraft "op-agent/raft"
 	"strings"
 	"time"
 
+	"github.com/openark/golib/sqlutils"
 	"op-agent/common"
 	"op-agent/config"
 	"op-agent/db"
 	"op-agent/util"
-	"github.com/openark/golib/sqlutils"
 )
 
 

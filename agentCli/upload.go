@@ -3,11 +3,11 @@ package agentCli
 import (
 	"database/sql"
 	"fmt"
-	"op-agent/db"
-	"op-agent/util"
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
 	"github.com/spf13/cobra"
+	"op-agent/db"
+	"op-agent/util"
 	"path/filepath"
 	"time"
 )

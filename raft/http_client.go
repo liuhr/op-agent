@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/openark/golib/log"
 	"op-agent/config"
 	"op-agent/ssl"
-	"github.com/openark/golib/log"
 )
 
 var httpClient *http.Client

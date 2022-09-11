@@ -1,8 +1,8 @@
 package common
 
 import (
-	"op-agent/db"
 	"github.com/openark/golib/log"
+	"op-agent/db"
 )
 
 type Package struct {

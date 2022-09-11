@@ -2,11 +2,11 @@ package agentCli
 
 import (
         "fmt"
-        "op-agent/db"
-        "op-agent/util"
         "github.com/openark/golib/log"
         "github.com/spf13/cobra"
         "io/ioutil"
+        "op-agent/db"
+        "op-agent/util"
         "strings"
 )
 

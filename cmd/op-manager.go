@@ -4,12 +4,12 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/openark/golib/log"
 	"op-agent/app"
 	"op-agent/config"
-	"github.com/openark/golib/log"
 
 	_ "github.com/go-sql-driver/mysql"
-        _ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // main is the application's entry point. It will either spawn a CLI or HTTP itnerfaces.

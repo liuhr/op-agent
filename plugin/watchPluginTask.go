@@ -2,11 +2,11 @@ package plugin
 
 import (
 	"database/sql"
+	"github.com/openark/golib/log"
+	"github.com/openark/golib/sqlutils"
 	"op-agent/config"
 	"op-agent/db"
 	oraft "op-agent/raft"
-	"github.com/openark/golib/log"
-	"github.com/openark/golib/sqlutils"
 	"time"
 )
 

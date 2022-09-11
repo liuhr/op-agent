@@ -1,9 +1,9 @@
 package logic
 
 import (
-	"op-agent/plugin"
 	"op-agent/agentCli"
 	"op-agent/manager"
+	"op-agent/plugin"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -13,8 +13,8 @@ import (
 	"op-agent/config"
 	"op-agent/process"
 
-	"op-agent/util"
 	"github.com/openark/golib/log"
+	"op-agent/util"
 )
 
 const (

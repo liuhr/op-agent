@@ -12,8 +12,8 @@ import (
 	"github.com/martini-contrib/auth"
 	"github.com/martini-contrib/render"
 
-	"op-agent/config"
 	"op-agent/agentCli"
+	"op-agent/config"
 	"op-agent/process"
 	oraft "op-agent/raft"
 	"op-agent/util"

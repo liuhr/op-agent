@@ -6,10 +6,10 @@ import (
 	"strings"
 	"sync"
 
-	"op-agent/config"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
-	_ "github.com/go-sql-driver/mysql"
+	"op-agent/config"
 )
 
 // ExecDb will execute given query on the backend database.

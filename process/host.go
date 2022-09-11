@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 
-	"op-agent/util"
 	"github.com/openark/golib/log"
+	"op-agent/util"
 )
 
 var ThisHostname string

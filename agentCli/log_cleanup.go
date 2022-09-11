@@ -2,9 +2,9 @@ package agentCli
 
 import (
 	"database/sql"
+	"github.com/openark/golib/log"
 	"op-agent/config"
 	"op-agent/db"
-	"github.com/openark/golib/log"
 )
 
 func cleanupJobLogsOfEachHostOrAllHost(host string) {

@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/openark/golib/log"
+	"github.com/openark/golib/sqlutils"
 	"op-agent/config"
 	"op-agent/db"
 	oraft "op-agent/raft"
-	"github.com/openark/golib/log"
-	"github.com/openark/golib/sqlutils"
 )
 
 // RegisterNode writes down this node in the server_health table
