@@ -102,7 +102,25 @@ type Configuration struct {
 	OpAgentApiEndpoint						string
 	OpAgentDataReceiveApiEndPoint			string
 
-	Processes []map[string]string
+	OpManagers           []string
+	OpManagerLeader      string
+	OpManagerPort        uint
+	OpManagerUser        string
+	OpManagerPass        string
+	OpManagerApiEndPoint string
+
+
+	ContinuesDiscoverWithInSeconds int
+
+	//JobResultMaxSize							int
+	JobResultLines			int
+	ResultLogDir			string
+	PluginDeploymentDir		string
+	JobLogBatchSize			int
+	JobLogCommitTimeOut		uint
+
+	TokenFilePath	string
+	Processes		[]map[string]string
 }
 
 // Config is *the* configuration instance, used globally to get configuration data
@@ -158,6 +176,14 @@ func newConfiguration() *Configuration {
 		ConnBackendDbFlag:                        false,
 		DiscoverOpAgentIntervalLists:			  []int{120, 240, 300, 360, 420, 480, 540},
 		DiscoverOpAgentConcurrency:				  100,
+		JobLogBatchSize:                          100,
+		JobLogCommitTimeOut:                      1,
+		JobResultLines:							  10000,
+		ContinuesDiscoverWithInSeconds:			  240,
+		ResultLogDir:							  "./log",
+		PluginDeploymentDir:					  "./src",
+		TokenFilePath:							  "/tmp/token.cnf",
+		OpManagers:								  []string{},
 	}
 }
 
