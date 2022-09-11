@@ -1,6 +1,6 @@
 {
-  "JobName": "test1.py",
-  "Command": "python /data/op-agent/src/test1.py",
+  "JobName": "test.py",
+  "Command": "python /data/op-agent/src/test.py",
 
   "## Here are some demos": "",
   "## Seconds, Minutes, Hours, Day of month, Month, Day of week, Year": "* * * * * * *",

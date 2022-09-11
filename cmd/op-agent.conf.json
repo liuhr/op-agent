@@ -1,0 +1,51 @@
+{
+  "Debug": true,
+  "ListenAddress": ":7070",
+
+  "BackendDbHosts": "127.0.0.1",
+  "BackendDbPort":3306,
+  "BackendDbUser":"op_meta_user",
+  "BackendDbPass":"123456789",
+  "BackendDb":"op_meta",
+
+  "OpManagers": ["127.0.0.1"],
+  "OpManagerLeader": "",
+  "OpManagerPort": 8090,
+  "OpManagerUser": "opuser",
+  "OpManagerPass": "w95fa8cw403fc220db1f4csde2130bsfd",
+  "OpManagerApiEndPoint": "/api/opManager",
+
+  "AuthenticationMethod": "basic",
+  "HTTPAuthUser": "opuser",
+  "HTTPAuthPassword": "w95fa8cw403fc220db1f4csde2130bsfd",
+  "AuthUserHeader": "",
+  "PowerAuthUsers": [
+    "*"
+  ],
+  "UseSSL": false,
+  "UseMutualTLS": false,
+  "SSLSkipVerify": false,
+  "SSLPrivateKeyFile": "",
+  "SSLCertFile": "",
+  "SSLCAFile": "",
+  "SSLValidOUs": [],
+  "URLPrefix": "",
+  "StatusEndpoint": "/api/status",
+  "StatusOUVerify": false,
+
+  "MySQLReadTimeoutSeconds":30,
+  "MySQLConnectTimeoutSeconds": 2,
+
+  "JobLogBatchSize": 10,
+  "JobLogCommitTimeOut": 1,
+
+  "ContinuesDiscoverWithInSeconds": 10,
+  "ResultLogDir": "/data/op-agent/log",
+  "PluginDeploymentDir": "/data/op-agent/src",
+  "TokenFilePath": "/data/op-agent/token.cnf",
+
+  "If the task execution result lines is too many, it will not be saved to the database and a local log will be generated": "",
+  "JobResultLines": 10000,
+
+  "ApiEndpoint": "/api/opAgent"
+}

@@ -20,7 +20,7 @@
   "BackendDbHosts": "127.0.0.1",
   "BackendDbPort":3306,
   "BackendDbUser":"op_meta_user",
-  "BackendDbPass":"Gli9egh0ooMu9zohxeisx",
+  "BackendDbPass":"123456789",
   "BackendDb":"op_meta",
 
   "InstancePollSeconds": 5,
@@ -33,7 +33,7 @@
   "AgentDownloadPackageMaxConcurrency": 1000,
 
   "AuthenticationMethod": "basic",
-  "HTTPAuthUser": "sysuser",
+  "HTTPAuthUser": "opuser",
   "HTTPAuthPassword": "w95fa8cw403fc220db1f4csde2130bsfd",
   "AuthUserHeader": "",
   "PowerAuthUsers": [
@@ -55,7 +55,7 @@
   "NumberOfJobLogDaysKeepPerHost": 5,
   "NumberOfJobLogDaysKeepInactiveHost": 30,
   "LastSeenTimeoutSeconds": 600,
-  "OpAgentUser": "sysuser",
+  "OpAgentUser": "opuser",
   "OpAgentPass": "w95fa8cw403fc220db1f4csde2130bsfd",
   "DiscoverOpAgentConcurrency": 100,
   "DiscoverOpAgentIntervalLists": [5],
