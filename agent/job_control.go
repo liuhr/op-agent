@@ -112,13 +112,15 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 
 	defer func() {
 		//atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
-		timeTick = time.Duration(rand.Intn(config.Config.ContinuesDiscoverWithInSeconds)) * time.Second
+		//timeTick = time.Duration(rand.Intn(config.Config.ContinuesDiscoverWithInSeconds)) * time.Second
+		timeTick = time.Duration(config.Config.ContinuesDiscoverWithInSeconds) * time.Second
 		if requestData.Details == nil {
 			return
 		}
 		if value, ok := requestData.Details["agent_request_server_time_range"]; ok {
 			//The value of rand.Intn()  cannot be 0
-			timeTick = time.Duration(rand.Intn(util.ConvStrToInt(value)+1)) * time.Second
+			//timeTick = time.Duration(rand.Intn(util.ConvStrToInt(value)+1)) * time.Second
+			timeTick = time.Duration(util.ConvStrToInt(value)+1) * time.Second
 			return
 		}
 		return
@@ -334,7 +336,8 @@ func (controler *Controller) ContinuesDiscover() {
 		scheduleTimer *time.Timer
 	)
 	//atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
-	timeTick = time.Duration(rand.Intn(config.Config.ContinuesDiscoverWithInSeconds)) * time.Second
+	//timeTick = time.Duration(rand.Intn(config.Config.ContinuesDiscoverWithInSeconds)) * time.Second
+	timeTick = time.Duration(config.Config.ContinuesDiscoverWithInSeconds) * time.Second
 	scheduleTimer = time.NewTimer(timeTick)
 	for {
 		select {
