@@ -278,3 +278,14 @@ func FileExists(fileName string) bool {
 func WriteFile(path string, value string) error {
 	return ioutil.WriteFile(path, []byte(value), 0755)
 }
+
+func MakeDir(Path string) (string, error) {
+	pathExists := PathExists(Path)
+	if !pathExists {
+		err := os.MkdirAll(Path, 0766)
+		if err != nil {
+			return "", err
+		}
+	}
+	return Path, nil
+}

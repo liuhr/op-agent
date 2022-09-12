@@ -12,7 +12,7 @@ func ContinuousOperation() {
 	InitLogSink()
 
 	//Start job executor
-	//InitExecutor()
+	InitExecutor()
 
 	//Start job scheduler
 	//InitScheduler()

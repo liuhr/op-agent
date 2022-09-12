@@ -10,7 +10,6 @@ import (
 	"github.com/asmcos/requests"
 	"github.com/openark/golib/log"
 
-	"op-agent/base"
 	"op-agent/config"
 	"op-agent/db"
 	"op-agent/process"
@@ -18,8 +17,8 @@ import (
 )
 
 type LogSink struct {
-	logChan chan *base.JobLog
-	autoCommitChan chan *base.LogBatch
+	logChan chan *JobLog
+	autoCommitChan chan *LogBatch
 }
 
 
@@ -27,7 +26,7 @@ var (
 	G_logSink *LogSink
 )
 
-func (logSink *LogSink) saveLogs(bach *base.LogBatch)  {
+func (logSink *LogSink) saveLogs(bach *LogBatch)  {
 	/*sqlStr := `insert into joblogs
 				    (hostname, ip, jobname, command, version, plantime, scheduletime, starttime, endtime, output, err)
 				values `
@@ -51,7 +50,7 @@ func (logSink *LogSink) saveLogs(bach *base.LogBatch)  {
 	}
 }
 
-func WriteJobLogsThroughServerApi(jobLog *base.JobLog) error{
+func WriteJobLogsThroughServerApi(jobLog *JobLog) error{
 	var (
 		resp 				*requests.Response
 		err 				error
@@ -104,19 +103,19 @@ func WriteJobLogsThroughServerApi(jobLog *base.JobLog) error{
 
 func (logSink *LogSink) writeLoop() {
 	var (
-		logInfo *base.JobLog
-		logBatch *base.LogBatch
+		logInfo *JobLog
+		logBatch *LogBatch
 		commitTimer *time.Timer
-		timeoutBatch *base.LogBatch
+		timeoutBatch *LogBatch
 	)
 	for {
 		select {
 		case logInfo = <- logSink.logChan:
 			if logBatch == nil {
-				logBatch = &base.LogBatch{}
+				logBatch = &LogBatch{}
 				commitTimer = time.AfterFunc(
 					time.Duration(config.Config.JobLogCommitTimeOut) * time.Millisecond,
-					func(batch *base.LogBatch) func() {
+					func(batch *LogBatch) func() {
 						return func() {
 							logSink.autoCommitChan <- batch
 						}
@@ -141,14 +140,14 @@ func (logSink *LogSink) writeLoop() {
 
 func InitLogSink () (err error) {
 	G_logSink = &LogSink{
-		logChan: make(chan *base.JobLog, 1000),
-		autoCommitChan: make(chan *base.LogBatch, 1000),
+		logChan: make(chan *JobLog, 1000),
+		autoCommitChan: make(chan *LogBatch, 1000),
 	}
 	go G_logSink.writeLoop()
 	return
 }
 
-func (logSink *LogSink) Append(jobLog *base.JobLog) {
+func (logSink *LogSink) Append(jobLog *JobLog) {
 	select {
 	case logSink.logChan <- jobLog:
 	default:
@@ -158,7 +157,7 @@ func (logSink *LogSink) Append(jobLog *base.JobLog) {
 
 
 
-func SaveOnceJobLog(logInfo *base.JobLog) error {
+func SaveOnceJobLog(logInfo *JobLog) error {
 	sqlResult, err := db.ExecDb(`
 				update 
 					oncejobtask
