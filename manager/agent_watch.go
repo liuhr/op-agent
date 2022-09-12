@@ -68,7 +68,6 @@ func (agentWatch *AgentWatcher) GenerateAgentQueue() time.Duration {
 	}
 
 	if oraft.IsRaftEnabled() {
-		oraft.GetLeader()
 		if !oraft.IsLeader() {
 			return schedulerTickFunc()
 		}
