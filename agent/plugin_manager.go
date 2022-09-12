@@ -97,12 +97,16 @@ func (plugins *PluginManager) downloadFile(pluginMap map[string]string) error {
 	}
 
 	whereToPlacePackage := deploymentDir + "/" + pluginMap["packageName"]  // ./src/project.tar.gz
+	cmd := ""
+	if !strings.HasSuffix(pluginMap["packageName"], ".tar.gz") {
+		cmd = "rm -rf " + whereToPlacePackage
+		util.RunCommandNoOutput(cmd)
+	}
 	err = ioutil.WriteFile(whereToPlacePackage, data, 0644)
 	if err != nil {
 		return fmt.Errorf("ioutil.WriteFile(%s) : %+v", whereToPlacePackage, err)
 	}
 	log.Infof("Write file succeeded: %s", whereToPlacePackage)
-	cmd := ""
 	if strings.HasSuffix(pluginMap["packageName"], ".tar.gz") {
 		cmd = "tar xvf " + whereToPlacePackage + " -C" + " " + deploymentDir + "/"
 		// tar xvf ./src/project.tar.gz -C ./src/
