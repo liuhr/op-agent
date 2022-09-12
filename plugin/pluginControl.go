@@ -106,7 +106,7 @@ func (controller *PackageController) UpdateAgentPackageTaskErrMsg(id string, err
 func (controller *PackageController) QuestAgentPackageApi(host string, port string) error {
 	req := requests.Requests()
 	defer req.Close()
-	agentApi := fmt.Sprintf("http://%s:%s/api/update-agent-package",host, port)
+	agentApi := fmt.Sprintf("http://%s:%s/api/update-agent-plugin",host, port)
 	log.Infof("Request agentApi %s", agentApi)
 	resp, err := req.Get(agentApi, requests.Auth{config.Config.OpAgentUser, config.Config.OpAgentPass})
 	if err != nil {

@@ -4,9 +4,13 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/openark/golib/log"
 	"io/ioutil"
 	"net/http"
+	"op-agent/agent"
 	"strings"
+	"sync/atomic"
+	"time"
 
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/auth"
@@ -278,6 +282,99 @@ func (this *HttpAPI) GetActiveAgents(params martini.Params, r render.Render, req
 	return
 }
 
+func (this *HttpAPI) UpdatePluginVersion(params martini.Params, r render.Render, req *http.Request) {
+	data := map[string]string{}
+	err := agent.WatchPluginVersion(data)
+	if err != nil {
+		r.JSON(200, &APIResponse{Code: ERROR, Details: err})
+		return
+	}
+	Respond(r, &APIResponse{Code: OK, Message: ""})
+	return
+}
+
+func (this *HttpAPI) DataReceiveFromManger(params martini.Params, r render.Render, req *http.Request) {
+	defer req.Body.Close()
+	req.Header.Set("Content-Type","application/json")
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		r.JSON(500, &APIResponse{Code: ERROR, Message: err.Error()})
+		return
+	}
+	dataString := string(body)
+	dataStringList := strings.Split(dataString, "&")
+	if len(dataStringList) == 0 {
+		r.JSON(500, &APIResponse{Code: ERROR, Message: "Params can not be null"})
+		return
+	}
+	var (
+		getJobsInfo string
+		getPluginsInfo string
+		receiveData map[string]string
+		respondData map[string]string
+	)
+	respondData = map[string]string{}
+	err = json.Unmarshal([]byte(dataStringList[0]), &receiveData)
+	if activeRaftManagers, ok := receiveData["raftAvailableNodes"]; ok {
+		if activeRaftManagers != "" {
+			log.Infof("Found activeRaftManagers: %s, will update config.Config.OpManagers", activeRaftManagers)
+			config.Config.OpManagers = strings.Split(activeRaftManagers, ",")
+		}
+	}
+
+	getAllJobsStatus := receiveData["GetAllJobsStatus"]
+	if getAllJobsStatus != "" {
+		errInfo, _ := base64.StdEncoding.DecodeString(getAllJobsStatus)
+		log.Errorf("GetAllJobsStatus err: %s", string(errInfo))
+	} else {
+		var data []map[string]string
+		jobsMapListStr := receiveData["allJobs"]
+		if jobsMapListStr != "" {
+			if err := json.Unmarshal([]byte(jobsMapListStr), &data); err != nil {
+				getJobsInfo = fmt.Sprintf("jobsMapListStr: %s Unmarshal jobsMapListStr err: %+v", jobsMapListStr,err)
+				log.Errorf(getJobsInfo)
+			} else {
+				go agent.UpdateChangedJobs(data)
+			}
+		}
+	}
+
+	getPluginsTaskStatus := receiveData["GetPackagesTaskStatus"]
+	if getPluginsTaskStatus != "" {
+		errInfo, _ := base64.StdEncoding.DecodeString(getPluginsTaskStatus)
+		log.Errorf("getPluginsTaskStatus err: %s", string(errInfo))
+	} else {
+		var data map[string]string
+		pluginTaskMapStr := receiveData["PackageTask"]
+		if pluginTaskMapStr != "" {
+			if err := json.Unmarshal([]byte(pluginTaskMapStr), &data); err != nil {
+				getPluginsInfo =  fmt.Sprintf("packageTaskMapStr:%s Unmarshal pluginTaskMapStr err: %+v", pluginTaskMapStr, err)
+				log.Errorf(getPluginsInfo)
+			} else {
+				go agent.WatchPluginVersion(data)
+			}
+		}
+	}
+
+	if nonLiveIPSeg, ok := receiveData["nonliveips"]; ok {
+		if nonLiveIPSeg != "" {
+			go process.GetHostNameAndIp(strings.Split(nonLiveIPSeg, ","))
+		}
+	}
+
+	respondData["app_version"] = config.NewAppVersion()
+	respondData["hostname"] = process.ThisHostname
+	respondData["ip"] = process.ThisHostIp
+	respondData["token"] = process.ThisHostToken
+	respondData["getPackagesInfo"] = getPluginsInfo
+	respondData["getJobsInfo"] = getJobsInfo
+	//SinceLastReceiveDataFromServerDuration := base.SinceLastReceiveDataFromServer()
+	atomic.StoreInt64(&agent.LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
+	Respond(r, &APIResponse{Code: OK, Details: respondData})
+	return
+}
+
+
 func (this *HttpAPI) GetOnceJobVersion(params martini.Params, r render.Render, req *http.Request) {
 	host := strings.Replace(params["ip"]," ","",-1)
 	jobName := strings.Replace(params["jobName"]," ","",-1)
@@ -466,6 +563,7 @@ func (this *HttpAPI) RegisterRequests(m *martini.ClassicMartini) {
 		apiEndpoint = config.DefaultApiEndpoint
 	}
 	m.Post(apiEndpoint, this.CommonRequest)
+	//op-manager side
 	m.Post("/api/job-save", this.JobSave)
 	m.Post("/api/save-job-execute-log", this.SaveJobLog)
 	m.Post("/api/save-node-status", this.NodeStatusSave)
@@ -474,6 +572,9 @@ func (this *HttpAPI) RegisterRequests(m *martini.ClassicMartini) {
 	m.Get("/api/get-jobs", this.GetAllJobs)
 	m.Get("/api/get-once-job-version/:ip/:jobName", this.GetOnceJobVersion)
 	m.Get("/api/active_agent", this.GetActiveAgents)
+	//op-agent side
+	m.Get("/api/update-agent-plugin", this.UpdatePluginVersion)
+	m.Post("/api/dataReceive", this.DataReceiveFromManger)
 	
 	// Configurable status check endpoint
 	if config.Config.StatusEndpoint == config.DefaultStatusAPIEndpoint {
