@@ -6,10 +6,9 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/hashicorp/raft"
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
-
-	"github.com/hashicorp/raft"
 )
 
 const raftStoreFile = "raft_store.db"

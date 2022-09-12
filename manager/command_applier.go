@@ -2,7 +2,9 @@ package manager
 
 import (
 	"encoding/json"
+
 	"github.com/openark/golib/log"
+
 	"op-agent/raft"
 )
 

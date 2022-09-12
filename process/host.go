@@ -1,12 +1,13 @@
 package process
 
 import (
-	"op-agent/config"
 	"os"
 	"sort"
 	"strings"
 
 	"github.com/openark/golib/log"
+
+	"op-agent/config"
 	"op-agent/util"
 )
 

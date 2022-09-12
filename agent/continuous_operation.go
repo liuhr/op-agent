@@ -1,8 +1,9 @@
 package agent
 
 import (
-	"github.com/openark/golib/log"
 	"time"
+
+	"github.com/openark/golib/log"
 )
 
 func ContinuousOperation() {

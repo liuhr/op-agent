@@ -4,16 +4,18 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/asmcos/requests"
 	"github.com/outbrain/golib/log"
+
 	"op-agent/agentCli"
 	"op-agent/common"
 	"op-agent/config"
 	"op-agent/process"
 	oraft "op-agent/raft"
 	"op-agent/util"
-	"strings"
-	"time"
 )
 
 type AgentWatcher struct {}

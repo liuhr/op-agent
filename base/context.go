@@ -5,15 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/asmcos/requests"
-	"github.com/gorhill/cronexpr"
-	"github.com/openark/golib/log"
-	"op-agent/config"
-	"op-agent/db"
-	"op-agent/util"
 	"strings"
 	"sync/atomic"
 	"time"
+
+	"github.com/asmcos/requests"
+	"github.com/gorhill/cronexpr"
+	"github.com/openark/golib/log"
+
+	"op-agent/config"
+	"op-agent/db"
+	"op-agent/util"
 )
 
 const (

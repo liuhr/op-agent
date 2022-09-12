@@ -1,16 +1,18 @@
 package manager
 
 import (
+	"strings"
+	"sync/atomic"
+	"time"
+
 	"github.com/openark/golib/log"
+
 	"op-agent/agentCli"
 	"op-agent/config"
 	"op-agent/plugin"
 	"op-agent/process"
 	oraft "op-agent/raft"
 	"op-agent/util"
-	"strings"
-	"sync/atomic"
-	"time"
 )
 
 const (

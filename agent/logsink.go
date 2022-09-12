@@ -4,15 +4,17 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/asmcos/requests"
 	"github.com/openark/golib/log"
+
 	"op-agent/base"
 	"op-agent/config"
 	"op-agent/db"
 	"op-agent/process"
 	"op-agent/util"
-	"strings"
-	"time"
 )
 
 type LogSink struct {

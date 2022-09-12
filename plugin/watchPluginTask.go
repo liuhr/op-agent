@@ -2,12 +2,14 @@ package plugin
 
 import (
 	"database/sql"
+	"time"
+
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
+
 	"op-agent/config"
 	"op-agent/db"
 	oraft "op-agent/raft"
-	"time"
 )
 
 type WatchPackageTask struct {}

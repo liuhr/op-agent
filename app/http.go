@@ -2,20 +2,20 @@ package app
 
 import (
 	nethttp "net/http"
-	"op-agent/agent"
-	"op-agent/manager"
 	"strings"
-
-	"op-agent/config"
-	"op-agent/http"
-	"op-agent/process"
-	"op-agent/ssl"
 
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/auth"
 	"github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/render"
 	"github.com/openark/golib/log"
+
+	"op-agent/agent"
+	"op-agent/config"
+	"op-agent/http"
+	"op-agent/manager"
+	"op-agent/process"
+	"op-agent/ssl"
 )
 
 var sslPEMPassword []byte

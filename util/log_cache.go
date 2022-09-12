@@ -2,8 +2,9 @@ package util
 
 import (
 	"fmt"
-	"github.com/patrickmn/go-cache"
 	"time"
+
+	"github.com/patrickmn/go-cache"
 )
 
 var logEntryCache *cache.Cache = cache.New(time.Minute, time.Second*5)

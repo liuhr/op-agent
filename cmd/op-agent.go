@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/openark/golib/log"
+
 	"op-agent/app"
 	"op-agent/config"
 )

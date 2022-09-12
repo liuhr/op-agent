@@ -2,13 +2,15 @@ package agentCli
 
 import (
 	"fmt"
+	"sort"
+	"strings"
+
 	"github.com/gorhill/cronexpr"
 	"github.com/openark/golib/log"
 	"github.com/openark/golib/sqlutils"
 	"github.com/spf13/cobra"
+
 	"op-agent/db"
-	"sort"
-	"strings"
 )
 
 func newAnalysis() *cobra.Command {

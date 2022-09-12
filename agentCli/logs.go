@@ -2,11 +2,13 @@ package agentCli
 
 import (
         "fmt"
+        "strings"
+
         "github.com/openark/golib/log"
         "github.com/openark/golib/sqlutils"
         "github.com/spf13/cobra"
+
         "op-agent/db"
-        "strings"
 )
 
 var wideView string

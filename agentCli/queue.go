@@ -1,9 +1,10 @@
 package agentCli
 
 import (
-	"op-agent/config"
 	"sync"
 	"time"
+
+	"op-agent/config"
 )
 
 var DiscoveryQueue map[string]*Queue

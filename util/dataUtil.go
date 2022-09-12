@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/outbrain/golib/log"
 	"hash/crc32"
 	"math/rand"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/outbrain/golib/log"
 )
 
 func StringMapAdd(target map[string]string, source map[string]string) {

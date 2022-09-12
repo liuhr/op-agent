@@ -3,9 +3,10 @@ package agentCli
 import (
 	"github.com/openark/golib/log"
 	"github.com/spf13/cobra"
-	"op-agent/config"
 
 	_ "github.com/go-sql-driver/mysql"
+
+	"op-agent/config"
 )
 
 var (
