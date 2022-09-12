@@ -1,11 +1,9 @@
-package logic
+package manager
 
 import (
 	"encoding/json"
-
-	"op-agent/raft"
-
 	"github.com/openark/golib/log"
+	"op-agent/raft"
 )
 
 // AsyncRequest represents an entry in the async_request table

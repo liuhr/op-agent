@@ -19,7 +19,7 @@ import (
 type AgentWatcher struct {}
 
 var (
-	AgentWatch			*AgentWatcher
+	agentWatch			*AgentWatcher
 )
 
 type AgentNodeInfoRespond struct {

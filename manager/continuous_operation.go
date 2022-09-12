@@ -1,20 +1,16 @@
-package logic
+package manager
 
 import (
+	"github.com/openark/golib/log"
 	"op-agent/agentCli"
-	"op-agent/manager"
+	"op-agent/config"
 	"op-agent/plugin"
+	"op-agent/process"
+	oraft "op-agent/raft"
+	"op-agent/util"
 	"strings"
 	"sync/atomic"
 	"time"
-
-	oraft "op-agent/raft"
-
-	"op-agent/config"
-	"op-agent/process"
-
-	"github.com/openark/golib/log"
-	"op-agent/util"
 )
 
 const (
@@ -187,8 +183,6 @@ func RunOutScript(outscript *OutScripts) {
 	}
 }
 
-// ContinuousOperation starts an asynchronuous infinite discovery process where instances are
-// periodically investigated and their status captured
 func ContinuousOperation() {
 	log.Infof("continuous operation: setting up")
 	var logCleanupEntrance int64
@@ -232,7 +226,7 @@ func ContinuousOperation() {
 	log.Infof("continuous operation: starting")
 	plugin.RunAgentPackageControl()
 	plugin.RunWatchPackageTask()
-	manager.AgentWatch.InitAgentWatcher()
+	agentWatch.InitAgentWatcher()
 
 	if oraft.IsRaftEnabled() {
 		if health, err := process.HealthTest(); err != nil {

@@ -2,11 +2,12 @@ package app
 
 import (
 	nethttp "net/http"
+	"op-agent/agent"
+	"op-agent/manager"
 	"strings"
 
 	"op-agent/config"
 	"op-agent/http"
-	"op-agent/logic"
 	"op-agent/process"
 	"op-agent/ssl"
 
@@ -30,7 +31,7 @@ func Http(role string) {
 		process.ContinuousRegistration(process.ExecutionHttpMode, "")
 	}
 	martini.Env = martini.Prod
-	standardHttp()
+	standardHttp(role)
 }
 
 // Iterate over the private keys and get passwords for them
@@ -42,7 +43,7 @@ func promptForSSLPasswords() {
 }
 
 // standardHttp starts serving HTTP or HTTPS (api/web) requests, to be used by normal clients
-func standardHttp() {
+func standardHttp(role string) {
 	m := martini.Classic()
 
 	switch strings.ToLower(config.Config.AuthenticationMethod) {
@@ -89,7 +90,12 @@ func standardHttp() {
 	}
 	//inst.SetMaintenanceOwner(process.ThisHostname)
 	log.Info("Starting continuous operation")
-	go logic.ContinuousOperation()
+	if role == "op-manager" {
+		go manager.ContinuousOperation()
+	}
+	if role == "op-agent" {
+		go agent.ContinuousOperation()
+	}
 
 	log.Info("Registering endpoints")
 	http.API.URLPrefix = config.Config.URLPrefix
