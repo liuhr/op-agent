@@ -107,7 +107,7 @@ End:
 	result.EndTime = time.Now()
 	result.Output = buf.Bytes()
 	result.Err = err
-	//G_scheduler.PushJobResult(result)
+	G_scheduler.PushJobResult(result)
 	waitChan <- struct{}{}
 	return
 }

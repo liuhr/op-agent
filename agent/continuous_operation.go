@@ -15,7 +15,7 @@ func ContinuousOperation() {
 	InitExecutor()
 
 	//Start job scheduler
-	//InitScheduler()
+	InitScheduler()
 
 	//Start job controller
 	//InitJobControl()
