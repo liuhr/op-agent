@@ -78,7 +78,7 @@ func WriteJobLogsThroughServerApi(jobLog *JobLog) error{
 			log.Errorf("Pls check config.Config.OpManagers. Found null.")
 			return err
 		}
-		saveJobExecLogApi = fmt.Sprintf("http://%s:%d/api/save-job-execute-log",myServer, config.Config.OpManagerPort)
+		saveJobExecLogApi = fmt.Sprintf("http://%s:%d/api/save-job-execute-log",opManager, config.Config.OpManagerPort)
 		log.Infof(saveJobExecLogApi)
 		resp, err = req.PostJson(saveJobExecLogApi, requests.Auth{config.Config.OpManagerUser, config.Config.OpManagerPass}, data)
 

@@ -53,7 +53,7 @@
   "MySQLReadTimeoutSeconds":30,
   "MySQLConnectTimeoutSeconds": 2,
   "NumberOfJobLogDaysKeepPerHost": 5,
-  "NumberOfJobLogDaysKeepInactiveHost": 30,
+  "NumberOfJobLogDaysKeepInactiveHost": 7,
   "LastSeenTimeoutSeconds": 600,
   "OpAgentUser": "opuser",
   "OpAgentPass": "w95fa8cw403fc220db1f4csde2130bsfd",

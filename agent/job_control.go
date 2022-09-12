@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/asmcos/requests"
@@ -56,6 +55,7 @@ func (controler *Controller) initJobs() error {
 		//Pass it to scheduler
 		G_scheduler.PushJobEvent(jobEvent)
 	}
+	G_controller.continuesHandleRequests()
 	return nil
 }
 
@@ -111,6 +111,7 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 
 
 	defer func() {
+		//atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
 		timeTick = time.Duration(rand.Intn(config.Config.ContinuesDiscoverWithInSeconds)) * time.Second
 		if requestData.Details == nil {
 			return
@@ -123,10 +124,10 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 		return
 	}()
 
-	SinceLastReceiveDataFromServerDuration := SinceLastReceiveDataFromServer()
-	if SinceLastReceiveDataFromServerDuration.Seconds() < 300 {  // 5 minutes
-		return
-	}
+	//SinceLastReceiveDataFromServerDuration := SinceLastReceiveDataFromServer()
+	//if SinceLastReceiveDataFromServerDuration.Seconds() < 300 {  // 5 minutes
+	//	return
+	//}
 
 	data := requests.Datas{
 		"hostname": process.ThisHostname,
@@ -144,7 +145,7 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 			log.Errorf("Pls check config.Config.OpManagers. Found null.")
 			return
 		}
-		handleOpAgentApi = fmt.Sprintf("http://%s:%d/api/handle-op-agent",myServer, config.Config.OpManagerPort)
+		handleOpAgentApi = fmt.Sprintf("http://%s:%d/api/handle-op-agent",opManager, config.Config.OpManagerPort)
 		log.Infof("api: %s postData: %+v",handleOpAgentApi, data)
 		resp, err = req.PostJson(handleOpAgentApi, requests.Auth{config.Config.OpManagerUser, config.Config.OpManagerPass}, data)
 		if err == nil {
@@ -206,7 +207,7 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 			go process.GetHostNameAndIp(strings.Split(nonLiveIPSeg, ","))
 		}
 	}
-	atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
+	//atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
 	return
 }
 
@@ -280,11 +281,11 @@ func (controler *Controller) ListAllJobs() ([]map[string]string,error) {
 		resultMap := map[string]string{}
 		resultMap["memoryswlimit"] = m.GetString("memoryswlimit")
 		resultMap["ioreadlimit"] = m.GetString("ioreadlimit")
-		resultMap["iolimitdevice"] = m.GetString("iolimitdevice")
 		resultMap["memorylimit"] = m.GetString("memorylimit")
 		resultMap["cpushares"] = m.GetString("cpushares")
 		resultMap["cpuquotaus"] = m.GetString("cpuquotaus")
 		resultMap["iowritelimit"] = m.GetString("iowritelimit")
+		resultMap["iolimitdevice"] = m.GetString("iolimitdevice")
 		resultMap["jobname"] = m.GetString("jobname")
 		resultMap["command"] = m.GetString("command")
 		resultMap["cronexpr"] = m.GetString("cronexpr")
@@ -332,7 +333,7 @@ func (controler *Controller) ContinuesDiscover() {
 		scheduleAfter time.Duration
 		scheduleTimer *time.Timer
 	)
-	atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
+	//atomic.StoreInt64(&LastReceiveDataFromServerUnixNano, time.Now().UnixNano())
 	timeTick = time.Duration(rand.Intn(config.Config.ContinuesDiscoverWithInSeconds)) * time.Second
 	scheduleTimer = time.NewTimer(timeTick)
 	for {
