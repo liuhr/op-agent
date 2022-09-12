@@ -18,7 +18,7 @@ func ContinuousOperation() {
 	InitScheduler()
 
 	//Start job controller
-	//InitJobControl()
+	InitJobControl()
 
 	loopTimer := time.NewTimer(1 * time.Second)
 	log.Infof("continuous operation: starting")
