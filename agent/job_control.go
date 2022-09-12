@@ -197,7 +197,7 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 		if err := json.Unmarshal([]byte(packageTaskMapStr), &data); err != nil {
 			log.Errorf("Unmarshal packageTaskMapStr err: %+v", err)
 		} else {
-			//go WatchPackageVersion(data)
+			go WatchPluginVersion(data)
 		}
 	}
 
@@ -278,6 +278,13 @@ func (controler *Controller) ListAllJobs() ([]map[string]string,error) {
 
 	err = db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
 		resultMap := map[string]string{}
+		resultMap["memoryswlimit"] = m.GetString("memoryswlimit")
+		resultMap["ioreadlimit"] = m.GetString("ioreadlimit")
+		resultMap["iolimitdevice"] = m.GetString("iolimitdevice")
+		resultMap["memorylimit"] = m.GetString("memorylimit")
+		resultMap["cpushares"] = m.GetString("cpushares")
+		resultMap["cpuquotaus"] = m.GetString("cpuquotaus")
+		resultMap["iowritelimit"] = m.GetString("iowritelimit")
 		resultMap["jobname"] = m.GetString("jobname")
 		resultMap["command"] = m.GetString("command")
 		resultMap["cronexpr"] = m.GetString("cronexpr")
@@ -287,13 +294,6 @@ func (controler *Controller) ListAllJobs() ([]map[string]string,error) {
 		resultMap["whiteips"] = m.GetString("whiteips")
 		resultMap["blackips"] = m.GetString("blackips")
 		resultMap["killFlag"] = m.GetString("killFlag")
-		resultMap["cpushares"] = m.GetString("cpushares")
-		resultMap["cpuquotaus"] = m.GetString("cpuquotaus")
-		resultMap["memorylimit"] = m.GetString("memorylimit")
-		resultMap["memoryswlimit"] = m.GetString("memoryswlimit")
-		resultMap["ioreadlimit"] = m.GetString("ioreadlimit")
-		resultMap["iowritelimit"] = m.GetString("iowritelimit")
-		resultMap["iolimitdevice"] = m.GetString("iolimitdevice")
 		results = append(results, resultMap)
 		return nil
 	})
