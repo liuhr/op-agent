@@ -139,9 +139,9 @@ func (controler *Controller) continuesHandleRequests() (timeTick time.Duration) 
 	for i := 1; i <= 3; i++ {
 		req := requests.Requests()
 		req.SetTimeout(5)
-		myServer := util.TakeRandServerHost(config.Config.OpManagers)
-		if myServer == "" {
-			log.Errorf("Pls check config.Config.OpServers. Found null.")
+		opManager := util.TakeRandServerHost(config.Config.OpManagers)
+		if opManager == "" {
+			log.Errorf("Pls check config.Config.OpManagers. Found null.")
 			return
 		}
 		handleOpAgentApi = fmt.Sprintf("http://%s:%d/api/handle-op-agent",myServer, config.Config.OpManagerPort)
