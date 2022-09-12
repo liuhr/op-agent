@@ -1,6 +1,8 @@
 package util
 
 import (
+	"bytes"
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -109,6 +111,53 @@ func execCmd(commandText string) (*exec.Cmd, string, error) {
 	return exec.Command("bash", tmpFile.Name()), tmpFile.Name(), nil
 }
 
+func ExecCmdWithTimeout(commandText string, timoutSecond int) (string, error) {
+	var (
+		err    error
+		cmd    *exec.Cmd
+		ctx    context.Context
+		cancel context.CancelFunc
+	)
+	params := []string{"-c", commandText}
+	cmd = exec.Command("bash", params...)
+	log.Infof("Command: %+v", cmd)
+	buf := bytes.Buffer{}
+	cmd.Stdout = &buf
+	cmd.Stderr = &buf
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
+	if timoutSecond == 0 {
+		timoutSecond = 86400 //24 hours
+	}
+	ctx, cancel = context.WithTimeout(context.Background(), time.Duration(timoutSecond)*time.Second)
+	defer cancel()
+
+	waitChan := make(chan struct{}, 1)
+	defer close(waitChan)
+	go func() {
+		select {
+		case <-ctx.Done():
+			log.Errorf("Timeout, kill job %s pid:%d", commandText, cmd.Process.Pid)
+			syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+		case <-waitChan:
+			return
+		}
+	}()
+
+	if err = cmd.Start(); err != nil {
+		log.Errorf("cmd.Start() err %+v", err)
+		goto End
+	}
+
+	if err = cmd.Wait(); err != nil {
+		log.Errorf("cmd.Wait() err %+v %s", err, string(buf.Bytes()))
+		goto End
+	}
+End:
+	waitChan <- struct{}{}
+	return string(buf.Bytes()), err
+}
+
 func GetLocalIP(filter []string) (ipv4 []string, err error) {
 	var (
 		addrs   []net.Addr
@@ -165,7 +214,6 @@ func LookupHost(name string) (addrs []string, err error) {
 	addr, err := net.LookupHost(name)
 	return addr,err
 }
-
 
 func PathExists(path string) bool {
 	_, err := os.Stat(path)
@@ -279,6 +327,20 @@ func WriteFile(path string, value string) error {
 	return ioutil.WriteFile(path, []byte(value), 0755)
 }
 
+func MakeDateDir(parentPath string) (string, error) {
+	timeNow := time.Now()
+	dateTime := timeNow.Format("2006-01-02")
+	dirPath := parentPath + "/" + dateTime
+	pathExists := PathExists(dirPath)
+	if !pathExists {
+		err := os.Mkdir(dirPath, 0766)
+		if err != nil {
+			return "", err
+		}
+	}
+	return dirPath, nil
+}
+
 func MakeDir(Path string) (string, error) {
 	pathExists := PathExists(Path)
 	if !pathExists {
@@ -289,3 +351,4 @@ func MakeDir(Path string) (string, error) {
 	}
 	return Path, nil
 }
+
