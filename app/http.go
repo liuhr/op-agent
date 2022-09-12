@@ -20,9 +20,15 @@ import (
 var sslPEMPassword []byte
 
 // Http starts serving
-func Http() {
+func Http(role string) {
 	promptForSSLPasswords()
-	process.ContinuousRegistration(process.ExecutionHttpMode, "")
+	if role == "op-agent" {
+		process.InitToken()
+		process.InitHostName()
+	}
+	if role == "op-manager" {
+		process.ContinuousRegistration(process.ExecutionHttpMode, "")
+	}
 	martini.Env = martini.Prod
 	standardHttp()
 }

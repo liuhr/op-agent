@@ -190,3 +190,23 @@ func ReadAvailableNodes(onlyHttpNodes bool) (nodes [](*NodeHealth), err error) {
 	})
 	return nodes, log.Errore(err)
 }
+
+func GetNonLiveIpSegment() ([]string,error) {
+	var (
+		query string
+		err error
+		results []string
+	)
+	results = make([]string,0)
+	query = fmt.Sprintf("select * from variables where enable=1")
+	err = db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
+		if m.GetString("variable") == "nonliveips" {
+			results = append(results, m.GetString("value"))
+		}
+		return nil
+	})
+	if err != nil {
+		return results, err
+	}
+	return results, nil
+}

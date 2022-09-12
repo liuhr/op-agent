@@ -183,7 +183,7 @@ func ContinuousRegistration(extraInfo string, command string) {
 			} else {
 				atomic.StoreInt64(&LastContinousCheckHealthy, 0)
 			}
-			//LastContinousCheckHealthy 其他模块没有用到此变量，在orchestrator中这个变量当作监控metric值使用
+			//LastContinousCheckHealthy 其他模块没有用到此变量，在orc中这个变量当作监控metric值使用
 		}
 		// First one is synchronous
 		tickOperation()

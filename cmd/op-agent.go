@@ -53,5 +53,5 @@ func main() {
 		log.SetLevel(log.DEBUG)
 	}
 	config.MarkConfigurationLoaded()
-	app.Http()
+	app.Http("op-agent")
 }

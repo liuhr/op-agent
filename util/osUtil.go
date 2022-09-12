@@ -9,7 +9,6 @@ import (
 	"net"
 	"os"
 	"os/exec"
-	"regexp"
 	"strings"
 	"syscall"
 	"time"
@@ -110,23 +109,53 @@ func execCmd(commandText string) (*exec.Cmd, string, error) {
 	return exec.Command("bash", tmpFile.Name()), tmpFile.Name(), nil
 }
 
-func GetLocalIP() (ipv4 []string, err error) {
+func GetLocalIP(filter []string) (ipv4 []string, err error) {
 	var (
 		addrs   []net.Addr
 		addr    net.Addr
-		ipNet   *net.IPNet
+		ipNet   *net.IPNet // IP地址
 		isIpNet bool
+		allip   []string
 	)
-	//ipv4 = make([]string,0)
+	ipv4 = make([]string, 0)
+	allip = make([]string, 0)
 	if addrs, err = net.InterfaceAddrs(); err != nil {
 		return
 	}
 	for _, addr = range addrs {
+		// 这个网络地址是IP地址: ipv4, ipv6
 		if ipNet, isIpNet = addr.(*net.IPNet); isIpNet && !ipNet.IP.IsLoopback() {
+			// 跳过IPV6
 			if ipNet.IP.To4() != nil {
-				ipv4 = append(ipv4, ipNet.IP.String())
+				findFlag := false
+				ipString := ipNet.IP.String()
+				allip = append(allip, ipString)
+				if len(filter) > 0 {
+					for _, segment := range filter {
+						if found, err := HasSuffixWithKeyWork(ipString, fmt.Sprintf("^%s", segment)); err != nil {
+							if strings.Contains(ipString, segment) {
+								findFlag = true
+							}
+						} else {
+							if found {
+								findFlag = true
+							}
+						}
+					}
+					if findFlag {
+						continue
+					} else {
+						ipv4 = append(ipv4, ipString)
+					}
+				} else {
+					ipv4 = append(ipv4, ipString)
+				}
+
 			}
 		}
+	}
+	if len(ipv4) == 0 {
+		ipv4 = append(ipv4, allip...)
 	}
 	return
 }
@@ -209,6 +238,27 @@ func ReadFile(file string) ([]byte, error) {
         // return chunk
 }
 
+func ReadFileToString(filePath string) (string, error) {
+	var (
+		err      error
+		file     *os.File
+		fileInfo os.FileInfo
+	)
+	if file, err = os.Open(filePath); err != nil {
+		return "", err
+	}
+	defer file.Close()
+	if fileInfo, err = file.Stat(); err != nil {
+		return "", err
+	}
+	fileSize := fileInfo.Size()
+	buffer := make([]byte, fileSize)
+	if _, err = file.Read(buffer); err != nil {
+		return "", err
+	}
+	return string(buffer), nil
+}
+
 func GetFileSize(file string) (int64, error) {
 	fileInfo, err := os.Stat(file)
 	if err != nil {
@@ -218,12 +268,13 @@ func GetFileSize(file string) (int64, error) {
 	return fileSize, nil
 }
 
-func IsIP(ip string) (b bool) {
-
-	m, _ := regexp.MatchString("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", ip)
-
-	if  !m {
-		return false
+func FileExists(fileName string) bool {
+	if _, err := os.Stat(fileName); err == nil {
+		return true
 	}
-	return true
+	return false
+}
+
+func WriteFile(path string, value string) error {
+	return ioutil.WriteFile(path, []byte(value), 0755)
 }
