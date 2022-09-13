@@ -1,7 +1,7 @@
 package agent
 
-
 import (
+	"fmt"
 	"io/ioutil"
 	"strings"
 	"time"
@@ -138,22 +138,22 @@ func (scheduler *Scheduler) handleJobResult (result *JobExecuteResult) {
 		EndTime: result.EndTime.Format("2006-01-02 15:04:05"),
 	}
 
-	//if strings.Count(jobLog.Output, "\n") >= config.Config.JobResultLines {
-	if strings.Count(jobLog.Output, "\n") > 0 {
-		resultLogDir, err := util.MakeDir(config.Config.ResultLogDir)
-		if err != nil {
-			resultLogDir = "/tmp"
-		}
-		//resultLogFile := resultLogDir+"/"+result.ExecuteInfo.Job.JobName+fmt.Sprintf("-%d",time.Now().Unix()) + ".log" //  ./log/test.py-1627469221_log
-		resultLogFile := resultLogDir+"/"+result.ExecuteInfo.Job.JobName + ".log" //  ./log/test.py.log
+	resultLogDir, err := util.MakeDir(config.Config.ResultLogDir)
+	if err != nil {
+		resultLogDir = "/tmp"
+	}
+	//resultLogFile := resultLogDir+"/"+result.ExecuteInfo.Job.JobName+fmt.Sprintf("-%d",time.Now().Unix()) + ".log" //  ./log/test.py-1627469221_log
+	resultLogFile := resultLogDir+"/"+result.ExecuteInfo.Job.JobName + ".log" //  ./log/test.py.log
 
-		go func(logFile string) {
-			if err := ioutil.WriteFile(resultLogFile, result.Output,0644); err != nil {
-				log.Errorf("Exception writing task(%s) execution result to file(%s): %s", result.ExecuteInfo.Job.Command, logFile, err.Error())
-			}
-		}(resultLogFile)
-		//log.Warningf("Task(%s) execution result lines is more than %d, it will not be saved to meta and a local log will be generated", result.ExecuteInfo.Job.Command,config.Config.JobResultLines)
-		//jobLog.Output = fmt.Sprintf("The number of execution result lines is too large. The execution result is saved at: %s", resultLogFile)
+	go func(logFile string) {
+		if err := ioutil.WriteFile(resultLogFile, result.Output,0644); err != nil {
+			log.Errorf("Exception writing task(%s) execution result to file(%s): %s", result.ExecuteInfo.Job.Command, logFile, err.Error())
+		}
+	}(resultLogFile)
+
+	if strings.Count(jobLog.Output, "\n") >= config.Config.JobResultLines {
+		log.Warningf("Task(%s) execution result lines is more than %d, it will not be saved to meta and a local log will be generated", result.ExecuteInfo.Job.Command,config.Config.JobResultLines)
+		jobLog.Output = fmt.Sprintf("The number of execution result lines is too large. The execution result is saved at: %s", resultLogFile)
 	}
 
 	if result.Err != nil {
@@ -196,7 +196,7 @@ func (scheduler *Scheduler) handleJobResult (result *JobExecuteResult) {
 		delete(scheduler.jobExecutingTable, result.ExecuteInfo.Job.JobName)
 	}
 
-	//G_logSink.Append(jobLog)
+	G_logSink.Append(jobLog)
 	log.Infof("Task %s execution info: cmd=%s, Version=%s, OnceJob=%d, PlanTime=%s, ScheduleTime=%s, StartTime=%s, EndTime=%s",
 		jobLog.JobName, jobLog.Command, jobLog.Version, jobLog.OnceJob, jobLog.PlanTime, jobLog.ScheduleTime, jobLog.StartTime, jobLog.EndTime)
 	//fmt.Println("执行结果：", string(result.Output), result.Err)

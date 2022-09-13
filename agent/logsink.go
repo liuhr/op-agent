@@ -156,7 +156,6 @@ func (logSink *LogSink) Append(jobLog *JobLog) {
 }
 
 
-
 func SaveOnceJobLog(logInfo *JobLog) error {
 	sqlResult, err := db.ExecDb(`
 				update 
