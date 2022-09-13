@@ -55,8 +55,10 @@ func getJobLogs(jobName string, hostIP string, limit string, wide string) {
         var (
                 dataLists [][]string
                 hostIPS []map[string]string
+                onceJobFlag bool
         )
         dataLists = [][]string{}
+        onceJobFlag = false
         hostIPS = []map[string]string{}
 
         if limit == "" {
@@ -68,14 +70,22 @@ func getJobLogs(jobName string, hostIP string, limit string, wide string) {
                 hostIPS = getAllHosts()
         }
 
+        query := fmt.Sprintf("select * from jobs where jobname = '%s'", jobName)
+        db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
+                if m.GetString("oncejob") == "1" {
+                        onceJobFlag = true
+                }
+                return nil
+        })
+
+
         for _, ipMap := range hostIPS {
                 query := ""
-                if ipMap["token"] == "" {
-                        query = fmt.Sprintf("select * from oncejobtask where jobname = '%s' and ip REGEXP '%s' order by endtime desc limit %s", jobName, ipMap["ip"], limit)
-                }  else {
+                if onceJobFlag {
                         query = fmt.Sprintf("select * from oncejobtask where jobname = '%s' and token = '%s' order by endtime desc limit %s", jobName, ipMap["token"], limit)
+                } else {
+                        query = fmt.Sprintf("select * from joblogs where jobname = '%s' and token = '%s' order by endtime desc limit %s", jobName, ipMap["token"], limit)
                 }
-
                 err := db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
                         resultList := []string{}
                         if wide != "short" {
@@ -105,7 +115,6 @@ func getJobLogs(jobName string, hostIP string, limit string, wide string) {
                 }
         }
 
-
         title := []string{}
         if wide == "wide" {
                 title = []string{"JobName", "Command", "HostName", "HostIPS", "StartTime", "EndTime", "Output","Error"}
@@ -124,7 +133,6 @@ func getJobLogs(jobName string, hostIP string, limit string, wide string) {
         }
         return
 }
-
 
 func getAllHosts() (results []map[string]string) {
         var err error
