@@ -45,7 +45,7 @@
   "TokenFilePath": "/data/op-agent/token.cnf",
 
   "If the task execution result lines is too many, it will not be saved to the database and a local log will be generated": "",
-  "JobResultLines": 10000,
+  "JobResultLines": 100,
 
   "ApiEndpoint": "/api/opAgent"
 }

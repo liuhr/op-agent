@@ -153,7 +153,7 @@ func (scheduler *Scheduler) handleJobResult (result *JobExecuteResult) {
 
 	if strings.Count(jobLog.Output, "\n") >= config.Config.JobResultLines {
 		log.Warningf("Task(%s) execution result lines is more than %d, it will not be saved to meta and a local log will be generated", result.ExecuteInfo.Job.Command,config.Config.JobResultLines)
-		jobLog.Output = fmt.Sprintf("The number of execution result lines is too large. The execution result is saved at: %s", resultLogFile)
+		jobLog.Output = fmt.Sprintf("The number of execution result lines is too large. The execution result is saved at local host: %s", resultLogFile)
 	}
 
 	if result.Err != nil {
