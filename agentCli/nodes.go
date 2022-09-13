@@ -2,6 +2,8 @@ package agentCli
 
 import (
 	"fmt"
+	"github.com/asmcos/requests"
+	"op-agent/config"
 	"strings"
 
 	"github.com/openark/golib/log"
@@ -63,7 +65,11 @@ func GetNodesStatus(host string) error {
 		resultList = append(resultList, m.GetString("hostname"))
 		resultList = append(resultList, strings.Replace(m.GetString("ip"),",","\n",-1))
 		if m.GetInt("last_seen_from_now_minutes") > 10 {
-			resultList = append(resultList, "NotReady")
+			if GetNodeStatusFromApi(m.GetString("ip")) {
+				resultList = append(resultList, "Ready")
+			} else {
+				resultList = append(resultList, "NotReady")
+			}
 		} else {
 			resultList = append(resultList, "Ready")
 		}
@@ -107,4 +113,19 @@ func GetNodesStatus(host string) error {
 	table := TableWriter(title, dataLists)
 	table.Render()
 	return nil
+}
+
+func GetNodeStatusFromApi(ips string) bool {
+	for _, ip := range strings.Split(ips, ",") {
+		req := requests.Requests()
+		req.SetTimeout(2)
+		versionApi := fmt.Sprintf("http://%s:%d/api/version", ip, config.Config.OpAgentPort)
+		log.Infof(versionApi)
+		resp, _ := req.Get(versionApi, requests.Auth{config.Config.OpAgentUser, config.Config.OpAgentPass})
+		resultStr := resp.Text()
+		if strings.Contains(resultStr, "OK") {
+			return true
+		}
+	}
+	return false
 }
