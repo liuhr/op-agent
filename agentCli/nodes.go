@@ -120,7 +120,6 @@ func GetNodeStatusFromApi(ips string) bool {
 		req := requests.Requests()
 		req.SetTimeout(2)
 		versionApi := fmt.Sprintf("http://%s:%d/api/version", ip, config.Config.OpAgentPort)
-		log.Infof(versionApi)
 		resp, _ := req.Get(versionApi, requests.Auth{config.Config.OpAgentUser, config.Config.OpAgentPass})
 		resultStr := resp.Text()
 		if strings.Contains(resultStr, "OK") {
