@@ -105,6 +105,8 @@ func handleOriginalInfo(agentsOriginalInfoChan chan []string, agentsHandledInfoC
 			} else {
 				data[2] = "NotReady"
 			}
+		} else {
+			data[2] = "Ready"
 		}
 		agentsHandledInfoChan <- data
 	}
