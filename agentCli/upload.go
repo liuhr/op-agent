@@ -26,7 +26,7 @@ func newUpload() *cobra.Command {
 		Use:	"upload <file|document> [deploymentDirName]",
 		Short:  "Upload task package or executable file",
 		Long:   `Example:
-			upload test.py|projectDir /data/my-agent/src/
+			upload test.py|projectDir /data/op-agent/src/
 		`,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
