@@ -194,6 +194,13 @@ func GetAllJobs(token string) ([]map[string]string, error) {
 		}
 		resultMap["oncejob"] = onceJob
 		resultMap["jobname"] = jobname
+		resultMap["iolimitdevice"] = m.GetString("iolimitdevice")
+		resultMap["cpushares"] = m.GetString("cpushares")
+		resultMap["cpuquotaus"] = m.GetString("cpuquotaus")
+		resultMap["memorylimit"] = m.GetString("memorylimit")
+		resultMap["memoryswlimit"] = m.GetString("memoryswlimit")
+		resultMap["ioreadlimit"] = m.GetString("ioreadlimit")
+		resultMap["iowritelimit"] = m.GetString("iowritelimit")
 		resultMap["command"] = m.GetString("command")
 		resultMap["cronexpr"] = m.GetString("cronexpr")
 		resultMap["timeout"] = m.GetString("timeout")
@@ -201,13 +208,6 @@ func GetAllJobs(token string) ([]map[string]string, error) {
 		resultMap["whiteips"] = m.GetString("whiteips")
 		resultMap["blackips"] = m.GetString("blackips")
 		resultMap["killFlag"] = m.GetString("killFlag")
-		resultMap["cpushares"] = m.GetString("cpushares")
-		resultMap["cpuquotaus"] = m.GetString("cpuquotaus")
-		resultMap["memorylimit"] = m.GetString("memorylimit")
-		resultMap["memoryswlimit"] = m.GetString("memoryswlimit")
-		resultMap["ioreadlimit"] = m.GetString("ioreadlimit")
-		resultMap["iowritelimit"] = m.GetString("iowritelimit")
-		resultMap["iolimitdevice"] = m.GetString("iolimitdevice")
 		results = append(results, resultMap)
 		return nil
 	})
