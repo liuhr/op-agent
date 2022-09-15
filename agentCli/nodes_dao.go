@@ -27,7 +27,7 @@ func TakeAgentsStatus(host string, wide string) [][]string {
 		go handleOriginalInfo(agentsOriginalInfoChan, agentsHandledInfoChan, &wgHandleData)
 	}
 
-	if err := takeAgentsInfoFromBackend(host, wide, agentsHandledInfoChan); err != nil {
+	if err := takeAgentsInfoFromBackend(host, wide, agentsOriginalInfoChan); err != nil {
 		log.Error("takeAgentsInfoFromBackend err: %+v", err)
 	}
 	wgHandleData.Wait()
@@ -112,6 +112,7 @@ func handleOriginalInfo(agentsOriginalInfoChan chan []string, agentsHandledInfoC
 func getHandledInfoFromChan(dataLists [][]string, agentsHandledInfoChan chan []string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for data := range agentsHandledInfoChan {
+		data[1] = strings.Replace(data[1],"," ,"\n", -1 ) //data[1] stored 'ip' :like "192.168.1.1,192.168.1.2"
 		dataLists = append(dataLists, data)
 	}
 }
