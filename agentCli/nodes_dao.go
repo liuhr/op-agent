@@ -16,11 +16,11 @@ import (
 
 func TakeAgentsStatus(host string, wide string) [][]string {
 	var wg, wgHandleData sync.WaitGroup
-	dataLists := make([][]string, 0)
 	agentsOriginalInfoChan := make(chan []string, 100)
 	agentsHandledInfoChan := make(chan []string, 100)
+	resultsChan := make(chan [][]string, 1)
 	wg.Add(1)
-	go getHandledInfoFromChan(dataLists, agentsHandledInfoChan, &wg)
+	go getHandledInfoFromChan(resultsChan, agentsHandledInfoChan, &wg)
 
 	for i := uint(1); i <= 100; i++ {
 		wgHandleData.Add(1)
@@ -33,6 +33,7 @@ func TakeAgentsStatus(host string, wide string) [][]string {
 	wgHandleData.Wait()
 	close(agentsHandledInfoChan)
 	wg.Wait()
+	dataLists := <-resultsChan
 	return dataLists
 }
 
@@ -109,12 +110,14 @@ func handleOriginalInfo(agentsOriginalInfoChan chan []string, agentsHandledInfoC
 	}
 }
 
-func getHandledInfoFromChan(dataLists [][]string, agentsHandledInfoChan chan []string, wg *sync.WaitGroup) {
+func getHandledInfoFromChan(resultsChan chan [][]string, agentsHandledInfoChan chan []string, wg *sync.WaitGroup) {
+	dataLists := make([][]string, 0)
 	defer wg.Done()
 	for data := range agentsHandledInfoChan {
 		data[1] = strings.Replace(data[1],"," ,"\n", -1 ) //data[1] stored 'ip' :like "192.168.1.1,192.168.1.2"
 		dataLists = append(dataLists, data)
 	}
+	resultsChan <- dataLists
 }
 
 func GetNodeStatusFromApi(ips string) bool {
