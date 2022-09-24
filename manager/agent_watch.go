@@ -54,6 +54,59 @@ func (agentWatch *AgentWatcher) GenerateAgentWatcherLoop() {
 	}
 }
 
+func (agentWatch *AgentWatcher) GenerateAgentWatcherLoopWhenAddNewJob() {
+	continuesTick := time.Tick(time.Duration(10) * time.Second)
+	for range continuesTick {
+		if oraft.IsRaftEnabled() {
+			if !oraft.IsLeader() {
+				continue
+			}
+		}
+		agentWatch.pushAllActiveNodesToQueueWhenAddNewJob()
+	}
+}
+
+func (agentWatch *AgentWatcher) pushAllActiveNodesToQueueWhenAddNewJob() {
+	queueName := "discoverAgent"
+	agentNodeQueue := agentCli.CreateOrReturnQueue(queueName)
+	agentHosts, err := agentCli.GetAllActiveAgentsWhenAddNewJob()
+	if err != nil {
+		log.Errorf("Run agentCli.GetAllActiveAgentsWhenAddNewJob err: %+v", err)
+		return
+	}
+	for _, agentNode := range agentHosts {
+		node := agentCli.AgentNode{Hostname: agentNode["hostname"], IP: agentNode["ip"], Token: agentNode["token"], Port: util.ConvStrToInt(agentNode["port"])}
+		agentNodeQueue.Push(node)
+	}
+}
+
+
+
+func (agentWatch *AgentWatcher) GenerateNeedDownloadPluginAgentWatcherLoop() {
+	continuesTick := time.Tick(time.Duration(5) * time.Second)
+	for range continuesTick {
+		if oraft.IsRaftEnabled() {
+			if !oraft.IsLeader() {
+				continue
+			}
+		}
+		agentWatch.pushNeedDownloadPluginNodesToQueue()
+	}
+}
+
+func (agentWatch *AgentWatcher) pushNeedDownloadPluginNodesToQueue() {
+	queueName := "discoverAgent"
+	agentNodeQueue := agentCli.CreateOrReturnQueue(queueName)
+	agentHosts, err := agentCli.GetNeedDownloadPluginAgents()
+	if err != nil {
+		log.Errorf("Run agentCli.GetNeedDownloadPluginAgents err: %+v", err)
+		return
+	}
+	for _, agentNode := range agentHosts {
+		node := agentCli.AgentNode{Hostname: agentNode["hostname"], IP: agentNode["ip"], Token: agentNode["token"], Port: util.ConvStrToInt(agentNode["port"])}
+		agentNodeQueue.Push(node)
+	}
+}
 
 func (agentWatch *AgentWatcher) GenerateAgentQueue() time.Duration {
 	var (
@@ -203,10 +256,10 @@ func (agentWatch *AgentWatcher) ConcurrencyWatchAgentWatcherQueue() {
 	}
 }
 
-
 func (agentWatch *AgentWatcher) InitAgentWatcher() {
 	go agentWatch.GenerateAgentWatcherLoop()
+	go agentWatch.GenerateNeedDownloadPluginAgentWatcherLoop()
+	go agentWatch.GenerateAgentWatcherLoopWhenAddNewJob()
 	go agentWatch.ConcurrencyWatchAgentWatcherQueue()
-
 }
 

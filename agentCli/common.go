@@ -180,6 +180,44 @@ func GetOutDatedAgentHosts() ([]map[string]string, error) {
 	return results, err
 }
 
+func GetNeedDownloadPluginAgents() ([]map[string]string, error) {
+	var (
+		results  []map[string]string
+		err error
+	)
+	results = []map[string]string{}
+	query := "select t.hostname, t.token, t.agent_ips, h.http_port port from agent_package_task t left join node_health h on t.token=h.token  where t.status='1' and h.http_port !=''"
+	err = db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
+		result := map[string]string{}
+		result["hostname"] = m.GetString("hostname")
+		result["ip"] = m.GetString("agent_ips")
+		result["token"] = m.GetString("token")
+		result["port"] = m.GetString("port")
+		results = append(results, result)
+		return nil
+	})
+	return results, err
+}
+
+func GetAllActiveAgentsWhenAddNewJob() ([]map[string]string, error) {
+	var (
+		results  []map[string]string
+		newJobFlag bool
+		err error
+	)
+	results = []map[string]string{}
+	query := "select count(1) count from jobs where _timestamp  between date_add(now(), interval - 1 minute) and now()"
+	err = db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
+		if m.GetInt("count") > 1 {
+			newJobFlag = true
+		}
+		return nil
+	})
+	if newJobFlag {
+		results, err = GetAllActiveHosts()
+	}
+	return results, err
+}
 
 func GetAllJobs(token string) ([]map[string]string, error) {
 	var (
