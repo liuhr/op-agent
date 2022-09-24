@@ -80,8 +80,6 @@ func (agentWatch *AgentWatcher) pushAllActiveNodesToQueueWhenAddNewJob() {
 	}
 }
 
-
-
 func (agentWatch *AgentWatcher) GenerateNeedDownloadPluginAgentWatcherLoop() {
 	continuesTick := time.Tick(time.Duration(5) * time.Second)
 	for range continuesTick {
