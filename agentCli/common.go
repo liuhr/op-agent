@@ -180,6 +180,12 @@ func GetOutDatedAgentHosts() ([]map[string]string, error) {
 	return results, err
 }
 
+func PurgeOutDatedAgentsHosts() error {
+	delete := "delete from node_health where last_seen_active not between date_add(now(), interval - 1440 minute) and now()" //1440 minute = 24 hour
+	_, err := db.ExecDb(delete)
+	return err
+}
+
 func GetNeedDownloadPluginAgents() ([]map[string]string, error) {
 	var (
 		results  []map[string]string

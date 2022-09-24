@@ -216,6 +216,7 @@ func ContinuousOperation() {
 	domainCheckTick := time.Tick(time.Duration(config.Config.DomainCheckIntervalSeconds) * time.Second)
 	careTakingTick := time.Tick(time.Minute)
 	jobLogsCleanupTick := time.Tick(time.Hour)
+	outDatedAgentsCleanupTick := time.Tick(time.Hour)
 	raftNodesStatusCheckTick := time.Tick(time.Duration(config.Config.RaftNodesStatusCheckIntervalSeconds) * time.Second)
 
 	if config.Config.RaftEnabled {
@@ -238,6 +239,8 @@ func ContinuousOperation() {
 
 	for {
 		select {
+		case <-outDatedAgentsCleanupTick:
+			go agentCli.PurgeOutDatedAgentsHosts()
 		case <-jobLogsCleanupTick:
 			cleanFunc := func() {
 				if atomic.CompareAndSwapInt64(&logCleanupEntrance, 0, 1) {
