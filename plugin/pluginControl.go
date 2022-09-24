@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"op-agent/agentCli"
 	"strings"
 	"time"
 
@@ -45,7 +46,41 @@ func (controller *PackageController) ContinueGetNodesAgentsSpec() {
 			controller.GetAllAgentsDesc()
 		}
 	}()
+
+	go func() {
+		continuesTick := time.Tick(time.Duration(5) * time.Second)
+		for range continuesTick {
+			if oraft.IsRaftEnabled() {
+				if !oraft.IsLeader() {
+					continue
+				}
+			}
+			recentPackages := controller.getRecentPackages()
+			if len(recentPackages) < 1 {
+				continue
+			}
+			nodeQueue := CreateOrReturnQueue("DEFAULT")
+			if nodeQueue.QueueLen() != 0 {
+				log.Warningf("It is detected that there are nodes in the nodeQueue. Ignore this loop.")
+				continue
+			}
+			controller.GetAllAgentsDesc()
+		}
+	}()
 }
+
+func (controller *PackageController) getRecentPackages() []map[string]string {
+	resultLists := make([]map[string]string, 0)
+	query := fmt.Sprintf("select * from  package_info where _timestamp between date_add(now(), interval - 2 minute) and now()")
+	db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
+		resultMap := make(map[string]string, 0)
+		resultMap["package_name"] = m.GetString("package_name")
+ 		resultLists = append(resultLists, resultMap)
+		return nil
+	})
+	return resultLists
+}
+
 
 func (controller *PackageController) ContinueUpdatePackagesThroughAgentApi() {
 	go func() {
@@ -214,11 +249,8 @@ func (controller *PackageController) saveTaskToMeta(nodePackage *common.AgentNod
 }
 
 func (controller *PackageController) GetAllAgentsDesc() {
-	var (
-		query string
-	)
 	nodeQueue := CreateOrReturnQueue("DEFAULT")
-	query = fmt.Sprintf("select * from node_health where last_seen_active  between date_add(now(), interval - %d second) and now()", config.Config.LastSeenTimeoutSeconds)
+	/*query = fmt.Sprintf("select * from node_health where last_seen_active  between date_add(now(), interval - %d second) and now()", config.Config.LastSeenTimeoutSeconds)
 	db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
 		agentNodeSpec := common.AgentNodeSpec{
 			HostName: m.GetString("hostname"),
@@ -229,7 +261,18 @@ func (controller *PackageController) GetAllAgentsDesc() {
 		}
 		nodeQueue.Push(agentNodeSpec)
 		return nil
-	})
+	})*/
+	results, _ := agentCli.GetAllActiveHosts()
+	for _, data := range results {
+		agentNodeSpec := common.AgentNodeSpec{
+			HostName: data["hostname"],
+			Token: data["token"],
+			HostIps: data["ip"],
+			HttpPort: util.ConvStrToInt(data["port"]),
+			AppVersion: data["app_version"],
+		}
+		nodeQueue.Push(agentNodeSpec)
+	}
 }
 
 func RunAgentPackageControl() {

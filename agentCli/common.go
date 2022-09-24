@@ -107,11 +107,12 @@ func TableWriter(title []string, data [][]string ) *tablewriter.Table {
 
 func GetAllActiveHosts() ([]map[string]string, error) {
 	 var (
-	 	results  []map[string]string
 	 	err error
+	 	dataMapLists []map[string]string
+	 	results  []map[string]string
 	 )
 	 results = []map[string]string{}
-	 query := `select *
+	 /*query := `select *
 			  from 
 					node_health 
 				where last_seen_active  between date_add(now(), interval - 10 minute) and now()`
@@ -125,8 +126,14 @@ func GetAllActiveHosts() ([]map[string]string, error) {
 		result["last_seen_active"] = m.GetString("last_seen_active")
 		results = append(results, result)
 		return nil
-	})
+	})*/
 	//results, err = db.QueryAll(query)
+	dataMapLists, err = TakeAgentsStatus("","")
+	for _, data := range dataMapLists {
+		if data["status"] == "Ready" {
+			results = append(results, data)
+		}
+	}
 	return results, err
 }
 

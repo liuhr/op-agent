@@ -14,8 +14,11 @@ import (
 	"op-agent/util"
 )
 
-func TakeAgentsStatus(host string, wide string) []map[string]string {
-	var wg, wgHandleData sync.WaitGroup
+func TakeAgentsStatus(host string, wide string) ([]map[string]string, error) {
+	var (
+		err error
+		wg, wgHandleData sync.WaitGroup
+	)
 	agentsOriginalInfoChan := make(chan map[string]string, 100)
 	agentsHandledInfoChan := make(chan map[string]string, 100)
 	resultsChan := make(chan []map[string]string, 1)
@@ -27,14 +30,14 @@ func TakeAgentsStatus(host string, wide string) []map[string]string {
 		go handleOriginalInfo(agentsOriginalInfoChan, agentsHandledInfoChan, &wgHandleData)
 	}
 
-	if err := takeAgentsInfoFromBackend(host, wide, agentsOriginalInfoChan); err != nil {
+	if err = takeAgentsInfoFromBackend(host, wide, agentsOriginalInfoChan); err != nil {
 		log.Error("takeAgentsInfoFromBackend err: %+v", err)
 	}
 	wgHandleData.Wait()
 	close(agentsHandledInfoChan)
 	wg.Wait()
 	dataLists := <-resultsChan
-	return dataLists
+	return dataLists, err
 }
 
 func takeAgentsInfoFromBackend(host string,  wide string, agentsOriginalInfoChan chan map[string]string) error {
@@ -61,6 +64,7 @@ func takeAgentsInfoFromBackend(host string,  wide string, agentsOriginalInfoChan
 		resultMap := make(map[string]string, 0)
 		resultMap["hostname"] = m.GetString("hostname")
 		resultMap["ip"] = m.GetString("ip")
+		resultMap["token"] = m.GetString("token")
 		resultMap["port"] = m.GetString("http_port")
 		resultMap["active_flag"] = m.GetString("active_flag")
 		resultMap["last_seen_from_now_minutes"] = m.GetString("last_seen_from_now_minutes")

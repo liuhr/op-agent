@@ -36,7 +36,7 @@ func newNodes() *cobra.Command {
 func GetNodesStatus(host string, wide string) error {
 	activeAgentLists := make([][]string, 0)
 	nonActiveAgentLists := make([][]string, 0)
-	dataMapLists := TakeAgentsStatus(host, wide)
+	dataMapLists, _ := TakeAgentsStatus(host, wide)
 	for _, data := range dataMapLists {
 		activeLists := make([]string,0)
 		nonActiveLists := make([]string,0)
