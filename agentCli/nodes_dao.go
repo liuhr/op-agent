@@ -14,11 +14,11 @@ import (
 	"op-agent/util"
 )
 
-func TakeAgentsStatus(host string, wide string) [][]string {
+func TakeAgentsStatus(host string, wide string) []map[string]string {
 	var wg, wgHandleData sync.WaitGroup
-	agentsOriginalInfoChan := make(chan []string, 100)
-	agentsHandledInfoChan := make(chan []string, 100)
-	resultsChan := make(chan [][]string, 1)
+	agentsOriginalInfoChan := make(chan map[string]string, 100)
+	agentsHandledInfoChan := make(chan map[string]string, 100)
+	resultsChan := make(chan []map[string]string, 1)
 	wg.Add(1)
 	go getHandledInfoFromChan(resultsChan, agentsHandledInfoChan, &wg)
 
@@ -37,7 +37,7 @@ func TakeAgentsStatus(host string, wide string) [][]string {
 	return dataLists
 }
 
-func takeAgentsInfoFromBackend(host string,  wide string, agentsOriginalInfoChan chan []string) error {
+func takeAgentsInfoFromBackend(host string,  wide string, agentsOriginalInfoChan chan map[string]string) error {
 	var (
 		err error
 		query string
@@ -46,25 +46,27 @@ func takeAgentsInfoFromBackend(host string,  wide string, agentsOriginalInfoChan
 
 	if host != "" {
 		query = `select  
-					hostname,token,ip,app_version,last_seen_active,first_seen_active,
-					TIMESTAMPDIFF(MINUTE,last_seen_active,now()) as last_seen_from_now_minutes
+					hostname,token,ip,http_port,app_version,last_seen_active,first_seen_active, 
+        			TIMESTAMPDIFF(MINUTE,last_seen_active,now()) as last_seen_from_now_minutes,active_flag 
 				from 
-					node_health where hostname='%s' or ip REGEXP '%s' order by last_seen_active desc`
+					node_health where hostname='%s' or ip REGEXP '%s'`
 		query = fmt.Sprintf(query, host,host)
 	} else {
 		query = `select 
-					hostname,token,ip,app_version,last_seen_active,first_seen_active, 
-					TIMESTAMPDIFF(MINUTE,last_seen_active,now()) as last_seen_from_now_minutes 
-				from node_health order by last_seen_active desc`
+					hostname,token,ip,http_port,app_version,last_seen_active,first_seen_active, 
+        			TIMESTAMPDIFF(MINUTE,last_seen_active,now()) as last_seen_from_now_minutes,active_flag 
+				from node_health`
 	}
 	err = db.QueryDBRowsMap(query, func(m sqlutils.RowMap) error {
-		resultList := make([]string, 0)
-		resultList = append(resultList, m.GetString("hostname"))
-		resultList = append(resultList, m.GetString("ip"))
-		resultList = append(resultList, m.GetString("last_seen_from_now_minutes"))
-		resultList = append(resultList, m.GetString("app_version"))
-		resultList = append(resultList, m.GetString("first_seen_active"))
-		resultList = append(resultList, m.GetString("last_seen_active"))
+		resultMap := make(map[string]string, 0)
+		resultMap["hostname"] = m.GetString("hostname")
+		resultMap["ip"] = m.GetString("ip")
+		resultMap["port"] = m.GetString("http_port")
+		resultMap["active_flag"] = m.GetString("active_flag")
+		resultMap["last_seen_from_now_minutes"] = m.GetString("last_seen_from_now_minutes")
+		resultMap["app_version"] = m.GetString("app_version")
+		resultMap["first_seen_active"] = m.GetString("first_seen_active")
+		resultMap["last_seen_active"] = m.GetString("last_seen_active")
 		if host != "" || wide == "wide" {
 			hostPackages := make([]string, 0)
 			allNewPackages := make([]string, 0)
@@ -83,40 +85,39 @@ func takeAgentsInfoFromBackend(host string,  wide string, agentsOriginalInfoChan
 			for _, row := range rowsMap {
 				allNewPackages = append(allNewPackages, row["packageinfo"])
 			}
-			resultList = append(resultList, strings.Join(hostPackages, "\n"))
-			resultList = append(resultList, strings.Join(allNewPackages, "\n"))
+			resultMap["hostPackages"] = strings.Join(hostPackages, "\n")
+			resultMap["allNewPackages"] = strings.Join(allNewPackages, "\n")
 		}
-		agentsOriginalInfoChan <- resultList
+		agentsOriginalInfoChan <- resultMap
 		return nil
 	})
 
 	return err
 }
 
-func handleOriginalInfo(agentsOriginalInfoChan chan []string, agentsHandledInfoChan chan []string, wg *sync.WaitGroup) {
+func handleOriginalInfo(agentsOriginalInfoChan chan map[string]string, agentsHandledInfoChan chan map[string]string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for data := range agentsOriginalInfoChan {
 		if len(data) == 0 {
 			continue
 		}
-		if util.ConvStrToInt(data[2]) > 10 { //data[2] stored 'last_seen_from_now_minutes'
-			if GetNodeStatusFromApi(data[1]) { //data[1] stored 'ip'
-				data[2] = "Ready"
+		if util.ConvStrToInt(data["last_seen_from_now_minutes"]) > 10 {
+			if GetNodeStatusFromApi(data["ip"]) {
+				data["status"] = "Ready"
 			} else {
-				data[2] = "NotReady"
+				data["status"] = "NotReady"
 			}
 		} else {
-			data[2] = "Ready"
+			data["status"] = "Ready"
 		}
 		agentsHandledInfoChan <- data
 	}
 }
 
-func getHandledInfoFromChan(resultsChan chan [][]string, agentsHandledInfoChan chan []string, wg *sync.WaitGroup) {
-	dataLists := make([][]string, 0)
+func getHandledInfoFromChan(resultsChan chan []map[string]string, agentsHandledInfoChan chan map[string]string, wg *sync.WaitGroup) {
+	dataLists := make([]map[string]string, 0)
 	defer wg.Done()
 	for data := range agentsHandledInfoChan {
-		data[1] = strings.Replace(data[1],"," ,"\n", -1 ) //data[1] stored 'ip' :like "192.168.1.1,192.168.1.2"
 		dataLists = append(dataLists, data)
 	}
 	resultsChan <- dataLists
