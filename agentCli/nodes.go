@@ -3,6 +3,7 @@ package agentCli
 import (
 	"github.com/openark/golib/log"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 var wide string
@@ -41,7 +42,7 @@ func GetNodesStatus(host string, wide string) error {
 		nonActiveLists := make([]string,0)
 		if data["status"] == "Ready" {
 			activeLists = append(activeLists, data["hostname"])
-			activeLists = append(activeLists, data["ip"])
+			activeLists = append(activeLists, strings.Replace(data["ip"],"," ,"\n", -1 ))
 			activeLists = append(activeLists, data["status"])
 			activeLists = append(activeLists, data["app_version"])
 			activeLists = append(activeLists, data["first_seen_active"])
@@ -54,7 +55,7 @@ func GetNodesStatus(host string, wide string) error {
 		}
 		if data["status"] == "NotReady" {
 			nonActiveLists = append(nonActiveLists, data["hostname"])
-			nonActiveLists = append(nonActiveLists, data["ip"])
+			nonActiveLists = append(nonActiveLists, strings.Replace(data["ip"],"," ,"\n", -1 ))
 			nonActiveLists = append(nonActiveLists, data["status"])
 			nonActiveLists = append(nonActiveLists, data["app_version"])
 			nonActiveLists = append(nonActiveLists, data["first_seen_active"])
