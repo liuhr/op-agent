@@ -1,0 +1,12 @@
+{
+  "BackendDbHosts": "127.0.0.1",
+  "BackendDbPort": 3306,
+  "BackendDbUser": "op_meta_user",
+  "BackendDbPass": "user_password",
+  "BackendDb": "op_meta",
+
+  "OpAgentUser": "opuser",
+  "OpAgentPass": "w95fa8cw403fc220db1f4csde2130bsfd",
+  "OpAgentPort": 7070,
+  "OpAgentApiEndpoint": "/api/opAgent"
+}
