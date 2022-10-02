@@ -117,7 +117,7 @@ cd /data/op-manager/
 
 ```
 
-#### 在所有部署了agent的机器上部署一次性执行的python脚本
+#### 在所有部署了agent的机器一次性执行python脚本
 ```
 vim python_test.json
 {
