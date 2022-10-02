@@ -34,7 +34,7 @@ chmod +x op-manager
 
 wget https://github.com/liuhr/op-agent/blob/master/releases/config/op-manager.conf.json
 
-vim op-manager.conf.json
+vim op-manager.conf.json #修改配置文件
 
 "ListenAddress": ":8090" #op-manager监听的端口
 
@@ -59,7 +59,7 @@ chmod +x agentCli
 
 wget https://github.com/liuhr/op-agent/blob/master/releases/config/agentCli.conf.json
 
-vim agentCli.conf.json
+vim agentCli.conf.json #修改配置文件
 
 {
 
@@ -101,7 +101,7 @@ chmod +x op-agent
 
 wget https://github.com/liuhr/op-agent/blob/master/releases/config/op-agent.conf.json
 
-vim /data/op-agent/op-agent.conf.json
+vim /data/op-agent/op-agent.conf.json #修改配置文件
 
 "ListenAddress": ":7070",
 
