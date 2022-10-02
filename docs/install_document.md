@@ -39,9 +39,13 @@ vim op-manager.conf.json
 "ListenAddress": ":8090" #op-manager监听的端口
 
 "BackendDbHosts": "127.0.0.1",
+
 "BackendDbPort":3306,
+
 "BackendDbUser":"op_meta_user",
+
 "BackendDbPass":"user_password",
+
 "BackendDb":"op_meta",
 
 /data/op-manager/op-manager --config=/data/op-manager/op-manager.conf.json  #启动op-manager
@@ -58,23 +62,35 @@ wget https://github.com/liuhr/op-agent/blob/master/releases/config/agentCli.conf
 vim agentCli.conf.json
 
 {
+
 //配置连接元数据库
+
 "BackendDbHosts": "127.0.0.1",
+
 "BackendDbPort":3306,
+
 "BackendDbUser":"op_meta_user",
+
 "BackendDbPass":"user_password",
+
 "BackendDb":"op_meta",
 
 //配置连接agent api
+
 "OpAgentUser": "opuser",
+
 "OpAgentPass": "w95fa8cw403fc220db1f4csde2130bsfd",
+
 "OpAgentPort": 7070,
+
 "OpAgentApiEndpoint": "/api/opAgent"
+
 }
 
 ./agentCli -h
 
 # 安装op-agent
+
 mkdir /data/op-agent/log
 
 cd /data/op-agent/
@@ -89,17 +105,30 @@ vim /data/op-agent/op-agent.conf.json
 
 "ListenAddress": ":7070",
 
+//配置连接元数据库
+
 "BackendDbHosts": "127.0.0.1",
+
 "BackendDbPort":3306,
+
 "BackendDbUser":"op_meta_user",
+
 "BackendDbPass":"user_password",
+
 "BackendDb":"op_meta",
 
+//配置连接op-manager
+
 "OpServers": ["127.0.0.1"],
+
 "OpServerLeader": "",
+
 "OpServerPort": 8090,
+
 "OpServerUser": "opuser",
+
 "OpServerPass": "w95fa8cw403fc220db1f4csde2130bsfd",
+
 "OpServerApiEndPoint": "/api/opManager",
 
 /data/op-agent/op-agent --config=/data/op-agent/op-agent.conf.json  #启动op-agent
