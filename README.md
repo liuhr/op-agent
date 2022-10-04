@@ -31,7 +31,7 @@ op-agent最核心的功能就是运行任务，我们可以编辑一个任务的
 [1.线上标准部署](./docs/standard_deployment.md)
 
 ### agentCli命令行工具
-agentCli命令行工具是操作op-manager、op-agent唯一的入口，实现命令行工具的时候参考了kubernetes中kubectl命令的展示形式，重要子命令有get、logs、upload、download、save、analysis几个重要的子命令，可以方便的添加任务、管理任务、查看资源状态等。
+agentCli命令行工具是操作op-manager、op-agent唯一的入口，重要子命令有get、logs、upload、download、save、analysis几个重要的子命令，可以方便的添加任务、管理任务、查看资源状态等。
 ```
 ./agentCli --help
 Example:
@@ -231,9 +231,32 @@ cd /data/op-manager/
 ./agentCli get jobs apiTest.py
 
 #远程通过接口执行
-curl -s --connect-timeout 2 -u opuser:w95fa8cw403fc220db1f4csde2130bsfd http://127.0.0.1:7070/api/opAgent -d '{"jobname":"apiTest.py", "host":"192.168.1.1", "port":"3306"}' | jq .
+curl -s --connect-timeout 2 -u opuser:w95fa8cw403fc220db1f4csde2130bsfd http://127.0.0.1:7070/api/opAgent -d '{"jobname":"apiTest.py", "host":"192.168.1.1", "port":"3306"}' 
 
 #说明
-通过远程调用agent api 并传递参数host和port执行本地脚本
+通过远程调用agent api 并传递参数host和port执行本地脚本, 上面的命令会被调用agent机器上执行python /data/op-agent/src/apiTest.py --host '192.168.1.1' --port '3306'
+```
+
+#### 查看所有安装了agent机器列表
+```
+./agentCli get nodes
+HOSTNAME		IP	          STATUS		VERSION		FIRSTSEEN		LASTSEEN		
+op-agent-test01		192.168.1.1	  Ready			1.0.1		2022-10-04 08:02:19	2022-10-02 09:32:02	
+op-agent-test02		192.168.1.2	  Ready			1.0.1		2022-10-04 08:03:10	2022-10-02 09:32:05	
+
+```
+
+#### 查看在agent上部署了哪些任务
+```
+./agentCli get jobs
+JOBNAME		COMMAND				CRONEXPR		ONCEJOB		TIMEOUT		ADDTIME			LASTUPDATED		STATUS
+ls-l		ls -l /tmp						1		10		2022-10-03 15:01:49	2022-10-03 15:01:49	Enabled
+```
+
+#### 查看在agent上部署了哪些脚本或package
+```
+./agentCli get packages
+PACKAGENAME		PACKAGEVERSION			TIMESTAMP		DEPLOYDIR
+test.py			1630935031			2022-10-03 15:20:10	/data/op-agent/src
 ```
 
