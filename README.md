@@ -260,3 +260,20 @@ PACKAGENAME		PACKAGEVERSION			TIMESTAMP		DEPLOYDIR
 test.py			1630935031			2022-10-03 15:20:10	/data/op-agent/src
 ```
 
+### 常见问题
+#### 通过agentCli get nodes 没有发现已经安装了agent机器的列表
+agent会通过3种方式跟op-manager交互信息（上传自己的信息、获得最新的任务脚本以及执行包）。
+1. agent启动的时候会一次性上传自己的信息到元数据库，所以agent所在的机器会连接元数据库，检查agent到元数据库的连通性，用户权限等
+2. agent会周期性主动跟op-manager交换信息，周期时间可以通过agent的配置文件ContinuesDiscoverWithInSeconds参数设置，检查agent所在机器到op-manager API端口连通性（op-manager API端口：ListenAddress配置）
+3. op-manager会周期性并发的跟agent主动交换信息，周期时间可以通过op-manager配置文件DiscoverOpAgentIntervalLists设置，检查op-manager所在机器到agent API端口的连通性（agent API端口：ListenAddress配置）
+
+#### 通过agentCli save 命令在agent上部署任务没生效
+通过agentCli save xx.json 会把任务保存到元数据库，通过上面3种模式交换信息的时候，agent会获得最新的任务，请检查上面三种方式的连通性。
+
+#### 通过agentCli upload 上传的文件或包没有分发到agent所在的机器上
+agentCli upload 会把文件或者包保存到后端数据库，通过上面3种方式交换信息的时候，agent可以发现有最新的包需要下载，agent会连接元数据库下载最新的可执行文件或包，请检查agent到元数据库MySQL的连通性。op-manager会做并发控制（默认100）的分发文件或包。
+
+通过命令agentCli analysis packages 可以发现有哪些机器还没有同步文件或包，由于某些原因同步失败，可以自行登录元数据库，select * from agent_package_task 查看任务队列表， fail_reason字段是失败原因，清理掉相关条目会重新生成任务。
+
+
+自动文件或包下载管理方式可能不是很可靠（以二进制的方式把文件或包保存到数据库，远端agent连接数据库下载），用户也可以自行通过ssh，把可执行文件或包推到所有agent机器上。
