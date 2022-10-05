@@ -24,15 +24,15 @@ op-agent最核心的功能就是运行任务，我们可以编辑一个任务的
 # 安装和使用
 ### 快速上手
 
-[1.最简架构部署](./docs/install_document.md)
+[最简架构部署](./docs/install_document.md)
 
 ### 线上部署
 
-[1.线上标准部署](./docs/standard_deployment.md)
+[线上标准部署](./docs/standard_deployment.md)
 
 ### 配置文件参数
 
-[1.主要配置文件参数详解](./docs/config_parameter.md)
+[主要配置文件参数详解](./docs/config_parameter.md)
 
 ### agentCli命令行工具
 agentCli命令行工具是操作op-manager、op-agent唯一的入口，重要子命令有get、logs、upload、download、save、analysis几个重要的子命令，可以方便的添加任务、管理任务、查看资源状态等。
